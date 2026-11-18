@@ -49,6 +49,9 @@
     "email": "martyn@de-vries.dev"
   },
   "support": "mailto:martyn@de-vries.dev",
+  "pythonPackages": [
+    "cryptography"
+  ],
   "drivers": [
     {
       "name": {

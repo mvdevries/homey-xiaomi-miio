@@ -47,5 +47,8 @@
     "name": "Martyn de Vries",
     "email": "martyn@de-vries.dev"
   },
-  "support": "mailto:martyn@de-vries.dev"
+  "support": "mailto:martyn@de-vries.dev",
+  "pythonPackages": [
+    "cryptography"
+  ]
 }
