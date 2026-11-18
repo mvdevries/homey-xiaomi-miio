@@ -1,5 +1,14 @@
 import sys
 import types
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+
+def register_project_as_package() -> None:
+    package = types.ModuleType("app")
+    package.__path__ = [str(PROJECT_ROOT)]
+    sys.modules["app"] = package
 
 
 def register_homey_sdk_stub() -> None:
@@ -18,4 +27,5 @@ def register_homey_sdk_stub() -> None:
     sys.modules["homey"] = homey_package
 
 
+register_project_as_package()
 register_homey_sdk_stub()

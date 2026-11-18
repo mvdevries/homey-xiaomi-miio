@@ -1,12 +1,6 @@
-import importlib.util
-from pathlib import Path
+import importlib
 from types import ModuleType
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-
-def load_module(relative_path: str, name: str) -> ModuleType:
-    spec = importlib.util.spec_from_file_location(name, PROJECT_ROOT / relative_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+def load_module(module_path: str) -> ModuleType:
+    return importlib.import_module(f"app.{module_path}")

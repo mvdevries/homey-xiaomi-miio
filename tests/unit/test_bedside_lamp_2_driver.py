@@ -2,7 +2,7 @@ import pytest
 
 from tests.support import load_module
 
-driver = load_module("drivers/yeelink-light-bslamp2/driver.py", "bslamp2_driver")
+driver = load_module("drivers.yeelink-light-bslamp2.driver")
 
 VALID_TOKEN = "0123456789abcdef0123456789ABCDEF"
 

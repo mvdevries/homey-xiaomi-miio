@@ -1,6 +1,6 @@
 from tests.support import load_module
 
-device_module = load_module("drivers/yeelink-light-bslamp2/device.py", "bslamp2_device")
+device_module = load_module("drivers.yeelink-light-bslamp2.device")
 
 
 async def test_device_is_unavailable_until_the_connection_exists():

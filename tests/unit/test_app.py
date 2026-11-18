@@ -1,6 +1,6 @@
 from tests.support import load_module
 
-app_module = load_module("app.py", "xiaomi_app")
+app_module = load_module("app")
 
 
 async def test_on_init_logs_the_start():
