@@ -1,0 +1,14 @@
+{
+  "pair": {
+    "title": "Add a Xiaomi device",
+    "name": "Name",
+    "address": "IP address",
+    "token": "Device token (32 hexadecimal characters)",
+    "polling": "Polling interval (seconds)",
+    "add": "Add device",
+    "errors": {
+      "name_and_address_required": "Enter a name and an IP address.",
+      "token_invalid": "The token must be 32 hexadecimal characters."
+    }
+  }
+}

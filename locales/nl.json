@@ -1,0 +1,14 @@
+{
+  "pair": {
+    "title": "Xiaomi-apparaat toevoegen",
+    "name": "Naam",
+    "address": "IP-adres",
+    "token": "Apparaattoken (32 hexadecimale tekens)",
+    "polling": "Pollinginterval (seconden)",
+    "add": "Apparaat toevoegen",
+    "errors": {
+      "name_and_address_required": "Vul een naam en een IP-adres in.",
+      "token_invalid": "De token moet uit 32 hexadecimale tekens bestaan."
+    }
+  }
+}

@@ -1,0 +1,56 @@
+<style>
+  .pair-field { margin-bottom: 12px; }
+  .pair-field input { width: 100%; box-sizing: border-box; padding: 10px; }
+  .pair-message { margin-top: 12px; }
+  .pair-message[hidden] { display: none; }
+</style>
+
+<div class="pair-field">
+  <div data-i18n="pair.name"></div>
+  <input id="name" type="text" />
+</div>
+<div class="pair-field">
+  <div data-i18n="pair.address"></div>
+  <input id="address" type="text" inputmode="decimal" />
+</div>
+<div class="pair-field">
+  <div data-i18n="pair.token"></div>
+  <input id="token" type="password" />
+</div>
+<div class="pair-field">
+  <div data-i18n="pair.polling"></div>
+  <input id="polling" type="number" min="5" value="10" />
+</div>
+<button id="add" class="button" data-i18n="pair.add"></button>
+<div id="message" class="pair-message" hidden></div>
+
+<script>
+  Homey.setTitle(Homey.__("pair.title"));
+
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    element.textContent = Homey.__(element.dataset.i18n);
+  });
+
+  const message = document.getElementById("message");
+
+  function showError(code) {
+    message.textContent = Homey.__("pair.errors." + code) || code;
+    message.hidden = false;
+  }
+
+  document.getElementById("add").addEventListener("click", async () => {
+    message.hidden = true;
+    try {
+      const device = await Homey.emit("validate_device", {
+        name: document.getElementById("name").value,
+        address: document.getElementById("address").value,
+        token: document.getElementById("token").value,
+        polling: Number(document.getElementById("polling").value),
+      });
+      await Homey.createDevice(device);
+      Homey.done();
+    } catch (error) {
+      showError(error.message);
+    }
+  });
+</script>
