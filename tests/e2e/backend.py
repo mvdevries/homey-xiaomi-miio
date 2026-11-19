@@ -117,10 +117,12 @@ def build_pair_page(driver_id: str, view: str) -> bytes:
 
 
 class FakeScanner:
-    def __init__(self, devices: list[DiscoveredDevice]) -> None:
+    def __init__(self, devices: list[DiscoveredDevice], delay: float) -> None:
         self._devices = devices
+        self._delay = delay
 
     async def scan(self) -> list[DiscoveredDevice]:
+        await asyncio.sleep(self._delay)
         return self._devices
 
 
@@ -137,6 +139,7 @@ class Backend:
         self.created_devices: list[dict[str, Any]] = []
         self.discovered_devices: list[DiscoveredDevice] = []
         self.cloud = FakeXiaomiCloud()
+        self.scan_delay_seconds = 0.0
         self._driver: MiioDriver | None = None
         self.base_url = ""
 
@@ -151,7 +154,7 @@ class Backend:
         self._harness.call(self._create_driver())
         self._monkeypatch.setattr(
             "app.container.create_scanner",
-            lambda: FakeScanner(self.discovered_devices),
+            lambda: FakeScanner(self.discovered_devices, self.scan_delay_seconds),
         )
         self._server = ThreadingHTTPServer(("127.0.0.1", 0), self._build_handler())
         self.base_url = f"http://127.0.0.1:{self._server.server_address[1]}"

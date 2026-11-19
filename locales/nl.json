@@ -14,6 +14,7 @@
     "accountIntro": "Open de Mi Home-app op je telefoon en scan deze QR-code om in te loggen. Je login gaat rechtstreeks naar Xiaomi en wordt niet opgeslagen.",
     "accountWaiting": "Wachten op de scan…",
     "accountSignedIn": "Ingelogd. Je apparaten worden opgezocht…",
+    "accountSearching": "Je apparaten worden opgezocht…",
     "accountNoDevices": "Geen ondersteunde apparaten gevonden in je Xiaomi-account.",
     "accountExpired": "De QR-code is verlopen.",
     "accountFailed": "Inloggen is mislukt.",

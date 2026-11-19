@@ -194,6 +194,30 @@
     text-align: center;
   }
 
+  .spinner {
+    display: inline-block;
+    flex: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(128, 128, 128, 0.3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .busy-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
   .qr-area {
     display: flex;
     flex-direction: column;
@@ -299,7 +323,10 @@
 
   <div id="qr-area" class="qr-area">
     <img id="qr-image" class="qr-image" alt="" hidden />
-    <span id="status" class="muted small" data-i18n="pair.accountWaiting"></span>
+    <span class="busy-row muted small">
+      <span id="status-spinner" class="spinner"></span>
+      <span id="status" data-i18n="pair.accountWaiting"></span>
+    </span>
   </div>
 
   <div id="devices-area" hidden>
@@ -321,6 +348,7 @@
   const qrArea = document.getElementById("qr-area");
   const qrImage = document.getElementById("qr-image");
   const statusElement = document.getElementById("status");
+  const statusSpinner = document.getElementById("status-spinner");
   const devicesArea = document.getElementById("devices-area");
   const foundElement = document.getElementById("found");
   const continueButton = document.getElementById("continue");
@@ -354,10 +382,17 @@
     statusElement.textContent = text;
   }
 
-  function showMessageInList(text) {
+  function showMessageInList(text, busy) {
     const row = document.createElement("div");
-    row.className = "empty-row muted small";
-    row.textContent = text;
+    row.className = "empty-row muted small" + (busy ? " busy-row" : "");
+    if (busy) {
+      const spinner = document.createElement("span");
+      spinner.className = "spinner";
+      row.append(spinner);
+    }
+    const label = document.createElement("span");
+    label.textContent = text;
+    row.append(label);
     foundElement.replaceChildren(row);
   }
 
@@ -395,6 +430,7 @@
   async function showDevices() {
     qrArea.hidden = true;
     devicesArea.hidden = false;
+    showMessageInList(Homey.__("pair.accountSearching"), true);
     try {
       const devices = await Homey.emit("account_devices", {});
       if (devices.length === 0) {
@@ -424,6 +460,7 @@
 
   function endWithMessage(textKey) {
     stopPolling();
+    statusSpinner.hidden = true;
     showStatus(Homey.__(textKey));
     qrImage.hidden = true;
     retryButton.hidden = false;
@@ -455,6 +492,7 @@
   async function startLogin() {
     stopPolling();
     retryButton.hidden = true;
+    statusSpinner.hidden = false;
     showStatus(Homey.__("pair.accountWaiting"));
     try {
       const login = await Homey.emit("start_account_login", {});

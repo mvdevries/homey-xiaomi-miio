@@ -34,6 +34,7 @@ class FakeXiaomiCloud:
         self.login_status = 200
         self.polling_status = 200
         self.refuse_service_token = False
+        self.api_delay_seconds = 0.0
         self.requests: list[tuple[str, str]] = []
         self._cookies: dict[str, str] = {}
 
@@ -65,6 +66,7 @@ class FakeXiaomiCloud:
             if not self.refuse_service_token:
                 self._cookies["serviceToken"] = SERVICE_TOKEN
             return HttpResponse(200, b"ok")
+        await asyncio.sleep(self.api_delay_seconds)
         return self._api(url, params or {}, cookies or {})
 
     def _login(self) -> HttpResponse:

@@ -14,6 +14,7 @@
     "accountIntro": "Open the Mi Home app on your phone and scan this QR code to log in. Your login goes straight to Xiaomi and is not stored.",
     "accountWaiting": "Waiting for the scan…",
     "accountSignedIn": "Logged in. Looking for your devices…",
+    "accountSearching": "Looking for your devices…",
     "accountNoDevices": "No supported devices found in your Xiaomi account.",
     "accountExpired": "The QR code expired.",
     "accountFailed": "Logging in failed.",

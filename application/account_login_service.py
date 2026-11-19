@@ -77,20 +77,23 @@ class AccountLoginService:
             self._state = STATE_SIGNED_IN
 
     async def _collect(self, session: CloudSession) -> list[CloudDevice]:
-        found: list[CloudDevice] = []
-        failures = 0
-        for server in self._servers:
-            try:
-                listed = await session.list_devices(server)
-            except CloudError as error:
-                failures += 1
-                LOGGER.warning("Account %s: %s", server, error)
-                continue
-            LOGGER.warning("Account %s: %d devices", server, len(listed))
-            found.extend(listed)
-        if failures == len(self._servers):
+        results = await asyncio.gather(
+            *(self._list_server(session, server) for server in self._servers)
+        )
+        if all(result is None for result in results):
             raise CloudRequestError("cloud_unreachable")
-        return found
+        return [device for result in results for device in result or []]
+
+    async def _list_server(
+        self, session: CloudSession, server: str
+    ) -> list[CloudDevice] | None:
+        try:
+            listed = await session.list_devices(server)
+        except CloudError as error:
+            LOGGER.warning("Account %s: %s", server, error)
+            return None
+        LOGGER.warning("Account %s: %d devices", server, len(listed))
+        return listed
 
 
 def _by_name(device: CloudDevice) -> tuple[str, str]:

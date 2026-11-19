@@ -6,6 +6,7 @@ from pytest_bdd import given, parsers, then, when
 from tests.support.fake_miio_devices import DEVICE_ADDRESS, DEVICE_TOKEN_HEX
 from tests.support.loop_harness import wait_until
 
+SLOW_SECONDS = 2.0
 DRIVER_IDS = {
     "bedside lamp": "yeelink-light-bslamp2",
     "standing fan": "zhimi-fan-za4",
@@ -292,3 +293,23 @@ def i_do_not_see_the_account_device(page, name):
 @then("the token field is filled in")
 def the_token_field_is_filled_in(page):
     expect(page.locator("#token")).to_have_value(DEVICE_TOKEN_HEX)
+
+
+@given("my Xiaomi account takes a while to list its devices")
+def my_account_is_slow(backend):
+    backend.cloud.api_delay_seconds = SLOW_SECONDS
+
+
+@given("the network search takes a while")
+def the_network_search_is_slow(backend):
+    backend.scan_delay_seconds = SLOW_SECONDS
+
+
+@then("I see a spinner while the devices are being read")
+def i_see_a_spinner_for_the_account_devices(page):
+    expect(page.locator("#found .spinner")).to_be_visible()
+
+
+@then("I see a spinner while the network is searched")
+def i_see_a_spinner_for_the_search(page):
+    expect(page.locator("#found .spinner")).to_be_visible()

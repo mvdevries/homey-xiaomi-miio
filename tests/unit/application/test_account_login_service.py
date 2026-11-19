@@ -195,3 +195,28 @@ class TestAccountLoginServiceDevices:
 
         with pytest.raises(CloudRequestError):
             await service.devices()
+
+
+class TestAccountLoginServiceParallel:
+    async def test_given_slow_servers_when_asked_then_they_are_read_at_the_same_time(
+        self,
+    ):
+        started = []
+
+        class SlowSession:
+            async def list_devices(self, server):
+                started.append(server)
+                await asyncio.sleep(0.05)
+                return []
+
+        authenticator = FakeAuthenticator(session=SlowSession())
+        service = make_service(authenticator, ("de", "us", "sg"))
+        await service.start()
+        authenticator.gate.set()
+        await settle()
+
+        task = asyncio.create_task(service.devices())
+        await asyncio.sleep(0.01)
+
+        assert sorted(started) == ["de", "sg", "us"]
+        await task

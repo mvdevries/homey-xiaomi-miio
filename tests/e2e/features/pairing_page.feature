@@ -169,3 +169,14 @@ Feature: The pairing page
   Scenario: The account page is shown in Dutch
     When I open the Dutch account page of the bedside lamp
     Then I see the text "Wachten op de scan…" in the status
+
+  Scenario: A spinner is shown while the account devices are being read
+    Given my Xiaomi account takes a while to list its devices
+    When I open the account page of the bedside lamp
+    And I scan the QR code with the Mi Home app
+    Then I see a spinner while the devices are being read
+
+  Scenario: A spinner is shown while searching the network
+    Given the network search takes a while
+    When I open the search page of the bedside lamp
+    Then I see a spinner while the network is searched
