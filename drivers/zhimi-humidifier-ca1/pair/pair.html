@@ -277,9 +277,14 @@
   });
 
   activateOnClickOrKey(document.getElementById("add"), addDevice);
-  Homey.getViewStoreValue("pair", "address").then((address) => {
-    if (address) {
-      document.getElementById("address").value = address;
-    }
-  });
+  function fillFromStore(key, elementId) {
+    Homey.getViewStoreValue("pair", key).then((value) => {
+      if (value) {
+        document.getElementById(elementId).value = value;
+      }
+    });
+  }
+
+  fillFromStore("address", "address");
+  fillFromStore("name", "name");
 </script>

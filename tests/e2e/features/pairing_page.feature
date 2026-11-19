@@ -86,6 +86,13 @@ Feature: The pairing page
     And I continue
     Then the address field contains 192.0.2.10
 
+  Scenario: The name of a found device is filled in as the name
+    Given a device named "zhimi-fan-za4_mibt0FE4" is found on the network at 192.0.2.10
+    When I open the search page of the standing fan
+    And I choose the found device at 192.0.2.10
+    And I continue
+    Then the name field contains "zhimi-fan-za4_mibt0FE4"
+
   Scenario: Choosing a found device does not continue by itself
     Given a device is found on the network at 192.0.2.10
     When I open the search page of the bedside lamp

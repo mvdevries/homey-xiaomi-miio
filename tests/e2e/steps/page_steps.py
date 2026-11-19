@@ -192,3 +192,8 @@ def i_see_the_warning(page, text):
 def i_still_see_the_search_page(page):
     expect(page.locator("#found")).to_be_visible()
     expect(page.locator("#name")).to_have_count(0)
+
+
+@then(parsers.parse('the name field contains "{name}"'))
+def the_name_field_contains(page, name):
+    expect(page.locator("#name")).to_have_value(name)

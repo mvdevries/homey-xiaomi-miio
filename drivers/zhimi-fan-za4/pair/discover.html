@@ -347,6 +347,7 @@
       return;
     }
     await Homey.setViewStoreValue("pair", "address", selectedDevice.address);
+    await Homey.setViewStoreValue("pair", "name", selectedDevice.name);
     Homey.showView("pair");
   }
 
