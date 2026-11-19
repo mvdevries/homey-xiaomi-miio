@@ -52,6 +52,11 @@
   "pythonPackages": [
     "cryptography"
   ],
+  "homepage": "https://github.com/mvdevries/homey-xiaomi-miio",
+  "source": "https://github.com/mvdevries/homey-xiaomi-miio",
+  "bugs": {
+    "url": "https://github.com/mvdevries/homey-xiaomi-miio/issues"
+  },
   "drivers": [
     {
       "platforms": [
