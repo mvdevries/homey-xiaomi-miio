@@ -1,4 +1,7 @@
 {
+  "$extends": [
+    "miio-device"
+  ],
   "name": {
     "en": "Mi Bedside Lamp 2",
     "nl": "Mi Bedlamp 2"
@@ -11,53 +14,5 @@
     "light_saturation",
     "light_temperature",
     "light_mode"
-  ],
-  "platforms": [
-    "local"
-  ],
-  "connectivity": [
-    "lan"
-  ],
-  "images": {
-    "small": "{{driverAssetsPath}}/images/small.png",
-    "large": "{{driverAssetsPath}}/images/large.png",
-    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
-  },
-  "icon": "{{driverAssetsPath}}/icon.svg",
-  "pair": [
-    {
-      "id": "pair"
-    }
-  ],
-  "settings": [
-    {
-      "id": "address",
-      "type": "text",
-      "label": {
-        "en": "IP address",
-        "nl": "IP-adres"
-      },
-      "value": ""
-    },
-    {
-      "id": "token",
-      "type": "text",
-      "label": {
-        "en": "Device token",
-        "nl": "Apparaattoken"
-      },
-      "value": ""
-    },
-    {
-      "id": "polling",
-      "type": "number",
-      "label": {
-        "en": "Polling interval (seconds)",
-        "nl": "Pollinginterval (seconden)"
-      },
-      "min": 5,
-      "max": 3600,
-      "value": 10
-    }
   ]
 }

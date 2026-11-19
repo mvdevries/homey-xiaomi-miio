@@ -88,31 +88,35 @@ class TestHumidifierDevice:
         assert capabilities["humidifier_target_humidity"] == "50"
 
     @pytest.mark.parametrize(
-        ("handler", "value", "expected"),
+        ("capability", "value", "expected"),
         [
-            ("_on_power", True, ("power", True)),
-            ("_on_mode", "high", ("mode", "high")),
-            ("_on_target_humidity", "60", ("target", 60)),
-            ("_on_dry", True, ("dry", True)),
-            ("_on_led_display", True, ("led", 0)),
-            ("_on_led_display", False, ("led", 2)),
-            ("_on_buzzer", True, ("buzzer", True)),
-            ("_on_child_lock", False, ("lock", False)),
+            ("onoff", True, ("power", True)),
+            ("humidifier_mode", "high", ("mode", "high")),
+            ("humidifier_target_humidity", "60", ("target", 60)),
+            ("humidifier_dry", True, ("dry", True)),
+            ("led_display", True, ("led", 0)),
+            ("led_display", False, ("led", 2)),
+            ("buzzer_enabled", True, ("buzzer", True)),
+            ("locked", False, ("lock", False)),
         ],
     )
     async def test_given_a_humidifier_when_a_capability_changes_then_a_command_is_sent(
-        self, handler, value, expected
+        self, capability, value, expected
     ):
         humidifier = FakeHumidifier()
         device = FakeHomeyDevice(humidifier)
 
-        await getattr(device, handler)(value)
+        device.register_listeners()
+
+        await device.listeners[capability](value)
 
         assert humidifier.calls == [expected]
 
     async def test_given_no_humidifier_when_a_command_is_sent_then_it_fails(self):
         with pytest.raises(MiioError):
-            await FakeHomeyDevice()._on_power(True)
+            device = FakeHomeyDevice()
+            device.register_listeners()
+            await device.listeners["onoff"](True)
 
     def test_given_the_device_module_when_loaded_then_it_exports_a_polling_device(
         self,

@@ -67,4 +67,9 @@ The code follows the layers of Clean Architecture. Dependencies only point inwar
 - Driver folders contain a hyphen (`yeelink-light-bslamp2`), so tests load them by path
   (`tests/support/__init__.py`). The Homey loads a driver as `app.drivers.<id>.driver`, so driver modules
   import the shared code with absolute `app.` imports.
+- The `driver.compose.json` files extend the template `.homeycompose/drivers/templates/miio-device.json` (settings,
+  pairing view, platforms, connectivity and images). The `pair/pair.html` files cannot be shared by Homey, so a test
+  keeps the copies identical.
+- A device class only lists its commands in a `commands` table (capability to service method and a converter);
+  `MiioPollingDevice` registers the listeners, and `set_level` handles the dim capability of lamps and fans.
 - Device ids in `data.id` must stay stable: Homey keeps flows and rooms attached to them.

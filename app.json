@@ -54,19 +54,6 @@
   ],
   "drivers": [
     {
-      "name": {
-        "en": "Mi Bedside Lamp 2",
-        "nl": "Mi Bedlamp 2"
-      },
-      "class": "light",
-      "capabilities": [
-        "onoff",
-        "dim",
-        "light_hue",
-        "light_saturation",
-        "light_temperature",
-        "light_mode"
-      ],
       "platforms": [
         "local"
       ],
@@ -115,23 +102,22 @@
           "value": 10
         }
       ],
-      "id": "yeelink-light-bslamp2"
-    },
-    {
       "name": {
-        "en": "Mi Smart Standing Fan",
-        "nl": "Mi Smart staande ventilator"
+        "en": "Mi Bedside Lamp 2",
+        "nl": "Mi Bedlamp 2"
       },
-      "class": "fan",
+      "class": "light",
       "capabilities": [
         "onoff",
         "dim",
-        "fan_oscillating",
-        "fan_angle",
-        "led_display",
-        "buzzer_enabled",
-        "locked"
+        "light_hue",
+        "light_saturation",
+        "light_temperature",
+        "light_mode"
       ],
+      "id": "yeelink-light-bslamp2"
+    },
+    {
       "platforms": [
         "local"
       ],
@@ -180,25 +166,23 @@
           "value": 10
         }
       ],
-      "id": "zhimi-fan-za4"
-    },
-    {
       "name": {
-        "en": "Mi Smart Humidifier",
-        "nl": "Mi Smart luchtbevochtiger"
+        "en": "Mi Smart Standing Fan",
+        "nl": "Mi Smart staande ventilator"
       },
-      "class": "humidifier",
+      "class": "fan",
       "capabilities": [
         "onoff",
-        "humidifier_mode",
-        "humidifier_target_humidity",
-        "humidifier_dry",
-        "measure_humidity",
-        "measure_temperature",
+        "dim",
+        "fan_oscillating",
+        "fan_angle",
         "led_display",
         "buzzer_enabled",
         "locked"
       ],
+      "id": "zhimi-fan-za4"
+    },
+    {
       "platforms": [
         "local"
       ],
@@ -246,6 +230,22 @@
           "max": 3600,
           "value": 10
         }
+      ],
+      "name": {
+        "en": "Mi Smart Humidifier",
+        "nl": "Mi Smart luchtbevochtiger"
+      },
+      "class": "humidifier",
+      "capabilities": [
+        "onoff",
+        "humidifier_mode",
+        "humidifier_target_humidity",
+        "humidifier_dry",
+        "measure_humidity",
+        "measure_temperature",
+        "led_display",
+        "buzzer_enabled",
+        "locked"
       ],
       "id": "zhimi-humidifier-ca1"
     }

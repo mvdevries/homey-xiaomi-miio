@@ -4,13 +4,10 @@ from ..domain.bedside_lamp import (
     LampState,
     parse_state,
 )
-from .ports import DeviceTransport
+from .device_service import MiioService
 
 
-class BedsideLampService:
-    def __init__(self, transport: DeviceTransport) -> None:
-        self._transport = transport
-
+class BedsideLampService(MiioService):
     async def get_state(self) -> LampState:
         return parse_state(await self._transport.send("get_prop", STATE_PROPERTIES))
 
@@ -25,6 +22,3 @@ class BedsideLampService:
 
     async def set_color_temperature(self, kelvin: int) -> None:
         await self._transport.send("set_ct_abx", [kelvin, *TRANSITION])
-
-    def close(self) -> None:
-        self._transport.close()
