@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import random
 import time
 from collections.abc import Awaitable, Callable
@@ -24,6 +25,7 @@ from .xiaomi_signing import (
     signed_nonce,
 )
 
+LOGGER = logging.getLogger(__name__)
 LOGIN_URL = "https://account.xiaomi.com/longPolling/loginUrl"
 SERVICE_ID = "xiaomiio"
 POLL_TIMEOUT_SECONDS = 10.0
@@ -216,7 +218,9 @@ class XiaomiCloudClient:
 
     async def wait_for_scan(self, challenge: QrChallenge) -> XiaomiCloudSession:
         answer = await self._poll(challenge)
+        LOGGER.warning("Login poll: the QR code was scanned")
         service_token = await self._service_token(answer["location"])
+        LOGGER.warning("Login: the service token was received")
         return XiaomiCloudSession(
             self._http,
             user_id=str(answer["userId"]),
@@ -233,7 +237,9 @@ class XiaomiCloudClient:
                     "GET", challenge.polling_url, timeout_seconds=POLL_TIMEOUT_SECONDS
                 )
             except CloudTimeoutError:
+                LOGGER.warning("Login poll: no answer yet")
                 continue
+            LOGGER.warning("Login poll: status %s", response.status)
             if response.status == 200:
                 return _login_answer(parse_json(response.text))
             await self._sleep(POLL_RETRY_SECONDS)

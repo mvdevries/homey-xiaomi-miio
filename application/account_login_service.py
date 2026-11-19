@@ -70,10 +70,13 @@ class AccountLoginService:
         try:
             self._session = await authenticator.wait_for_scan(challenge)
         except LoginExpiredError:
+            LOGGER.warning("Login: the QR code expired")
             self._state = STATE_EXPIRED
-        except CloudError:
+        except CloudError as error:
+            LOGGER.warning("Login failed: %s", error)
             self._state = STATE_FAILED
         else:
+            LOGGER.warning("Login: signed in")
             self._state = STATE_SIGNED_IN
 
     async def _collect(self, session: CloudSession) -> list[CloudDevice]:
