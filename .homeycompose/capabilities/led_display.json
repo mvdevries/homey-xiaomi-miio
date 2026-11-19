@@ -1,0 +1,15 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "LED display",
+    "nl": "LED-display"
+  },
+  "desc": {
+    "en": "Turn the LED display on or off",
+    "nl": "Zet het LED-display aan of uit"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "toggle",
+  "insights": false
+}

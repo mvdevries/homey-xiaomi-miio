@@ -1,0 +1,15 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Dry mode",
+    "nl": "Droogstand"
+  },
+  "desc": {
+    "en": "Dry the humidifier after use",
+    "nl": "Droog de luchtbevochtiger na gebruik"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "toggle",
+  "insights": false
+}

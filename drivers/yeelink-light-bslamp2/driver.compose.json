@@ -41,7 +41,7 @@
     },
     {
       "id": "token",
-      "type": "password",
+      "type": "text",
       "label": {
         "en": "Device token",
         "nl": "Apparaattoken"

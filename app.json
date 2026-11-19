@@ -96,7 +96,7 @@
         },
         {
           "id": "token",
-          "type": "password",
+          "type": "text",
           "label": {
             "en": "Device token",
             "nl": "Apparaattoken"
@@ -116,6 +116,333 @@
         }
       ],
       "id": "yeelink-light-bslamp2"
+    },
+    {
+      "name": {
+        "en": "Mi Smart Standing Fan",
+        "nl": "Mi Smart staande ventilator"
+      },
+      "class": "fan",
+      "capabilities": [
+        "onoff",
+        "dim",
+        "fan_oscillating",
+        "fan_angle",
+        "led_display",
+        "buzzer_enabled",
+        "locked"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/zhimi-fan-za4/assets/images/small.png",
+        "large": "/drivers/zhimi-fan-za4/assets/images/large.png",
+        "xlarge": "/drivers/zhimi-fan-za4/assets/images/xlarge.png"
+      },
+      "icon": "/drivers/zhimi-fan-za4/assets/icon.svg",
+      "pair": [
+        {
+          "id": "pair"
+        }
+      ],
+      "settings": [
+        {
+          "id": "address",
+          "type": "text",
+          "label": {
+            "en": "IP address",
+            "nl": "IP-adres"
+          },
+          "value": ""
+        },
+        {
+          "id": "token",
+          "type": "text",
+          "label": {
+            "en": "Device token",
+            "nl": "Apparaattoken"
+          },
+          "value": ""
+        },
+        {
+          "id": "polling",
+          "type": "number",
+          "label": {
+            "en": "Polling interval (seconds)",
+            "nl": "Pollinginterval (seconden)"
+          },
+          "min": 5,
+          "max": 3600,
+          "value": 10
+        }
+      ],
+      "id": "zhimi-fan-za4"
+    },
+    {
+      "name": {
+        "en": "Mi Smart Humidifier",
+        "nl": "Mi Smart luchtbevochtiger"
+      },
+      "class": "humidifier",
+      "capabilities": [
+        "onoff",
+        "humidifier_mode",
+        "humidifier_target_humidity",
+        "humidifier_dry",
+        "measure_humidity",
+        "measure_temperature",
+        "led_display",
+        "buzzer_enabled",
+        "locked"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/zhimi-humidifier-ca1/assets/images/small.png",
+        "large": "/drivers/zhimi-humidifier-ca1/assets/images/large.png",
+        "xlarge": "/drivers/zhimi-humidifier-ca1/assets/images/xlarge.png"
+      },
+      "icon": "/drivers/zhimi-humidifier-ca1/assets/icon.svg",
+      "pair": [
+        {
+          "id": "pair"
+        }
+      ],
+      "settings": [
+        {
+          "id": "address",
+          "type": "text",
+          "label": {
+            "en": "IP address",
+            "nl": "IP-adres"
+          },
+          "value": ""
+        },
+        {
+          "id": "token",
+          "type": "text",
+          "label": {
+            "en": "Device token",
+            "nl": "Apparaattoken"
+          },
+          "value": ""
+        },
+        {
+          "id": "polling",
+          "type": "number",
+          "label": {
+            "en": "Polling interval (seconds)",
+            "nl": "Pollinginterval (seconden)"
+          },
+          "min": 5,
+          "max": 3600,
+          "value": 10
+        }
+      ],
+      "id": "zhimi-humidifier-ca1"
     }
-  ]
+  ],
+  "capabilities": {
+    "buzzer_enabled": {
+      "type": "boolean",
+      "title": {
+        "en": "Buzzer",
+        "nl": "Zoemer"
+      },
+      "desc": {
+        "en": "Turn the sound feedback on or off",
+        "nl": "Zet de geluidsmelding aan of uit"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "toggle",
+      "insights": false,
+      "icon": "/assets/capabilities/buzzer_enabled.svg"
+    },
+    "fan_angle": {
+      "type": "number",
+      "title": {
+        "en": "Oscillation angle",
+        "nl": "Oscillatiehoek"
+      },
+      "desc": {
+        "en": "Set the oscillation angle of the fan",
+        "nl": "Stel de oscillatiehoek van de ventilator in"
+      },
+      "units": {
+        "en": "°",
+        "nl": "°"
+      },
+      "min": 30,
+      "max": 120,
+      "step": 10,
+      "decimals": 0,
+      "getable": true,
+      "setable": true,
+      "uiComponent": "slider"
+    },
+    "fan_oscillating": {
+      "type": "boolean",
+      "title": {
+        "en": "Oscillation",
+        "nl": "Oscillatie"
+      },
+      "desc": {
+        "en": "Turn the oscillation of the fan on or off",
+        "nl": "Zet de oscillatie van de ventilator aan of uit"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "toggle",
+      "insights": false,
+      "icon": "/assets/capabilities/fan_oscillating.svg"
+    },
+    "humidifier_dry": {
+      "type": "boolean",
+      "title": {
+        "en": "Dry mode",
+        "nl": "Droogstand"
+      },
+      "desc": {
+        "en": "Dry the humidifier after use",
+        "nl": "Droog de luchtbevochtiger na gebruik"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "toggle",
+      "insights": false
+    },
+    "humidifier_mode": {
+      "type": "enum",
+      "title": {
+        "en": "Mode",
+        "nl": "Stand"
+      },
+      "desc": {
+        "en": "Set the operating mode of the humidifier",
+        "nl": "Stel de stand van de luchtbevochtiger in"
+      },
+      "values": [
+        {
+          "id": "auto",
+          "title": {
+            "en": "Auto",
+            "nl": "Automatisch"
+          }
+        },
+        {
+          "id": "silent",
+          "title": {
+            "en": "Silent",
+            "nl": "Stil"
+          }
+        },
+        {
+          "id": "medium",
+          "title": {
+            "en": "Medium",
+            "nl": "Gemiddeld"
+          }
+        },
+        {
+          "id": "high",
+          "title": {
+            "en": "High",
+            "nl": "Hoog"
+          }
+        },
+        {
+          "id": "strong",
+          "title": {
+            "en": "Strong",
+            "nl": "Sterk"
+          }
+        }
+      ],
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker"
+    },
+    "humidifier_target_humidity": {
+      "type": "enum",
+      "title": {
+        "en": "Target humidity",
+        "nl": "Doelluchtvochtigheid"
+      },
+      "desc": {
+        "en": "Set the humidity the humidifier works towards",
+        "nl": "Stel de luchtvochtigheid in waar de luchtbevochtiger naartoe werkt"
+      },
+      "values": [
+        {
+          "id": "30",
+          "title": {
+            "en": "30%",
+            "nl": "30%"
+          }
+        },
+        {
+          "id": "40",
+          "title": {
+            "en": "40%",
+            "nl": "40%"
+          }
+        },
+        {
+          "id": "50",
+          "title": {
+            "en": "50%",
+            "nl": "50%"
+          }
+        },
+        {
+          "id": "60",
+          "title": {
+            "en": "60%",
+            "nl": "60%"
+          }
+        },
+        {
+          "id": "70",
+          "title": {
+            "en": "70%",
+            "nl": "70%"
+          }
+        },
+        {
+          "id": "80",
+          "title": {
+            "en": "80%",
+            "nl": "80%"
+          }
+        }
+      ],
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker"
+    },
+    "led_display": {
+      "type": "boolean",
+      "title": {
+        "en": "LED display",
+        "nl": "LED-display"
+      },
+      "desc": {
+        "en": "Turn the LED display on or off",
+        "nl": "Zet het LED-display aan of uit"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "toggle",
+      "insights": false
+    }
+  }
 }
