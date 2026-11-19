@@ -40,6 +40,30 @@ The unit tests mirror the layers (`domain`, `application`, `infrastructure`, `en
 the real code against a fake miIO device and the end-to-end tests drive the pairing page in a browser; both are
 Gherkin scenarios. See `CLAUDE.md` for the project structure and the architecture.
 
+## Contributing
+
+Bug reports, ideas and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first. Security
+problems go through [SECURITY.md](SECURITY.md).
+
+## How this was made
+
+Xiaomi MiIO for Homey was built with the help of AI. Most of the code, the tests and the documentation were
+written by [Claude](https://www.anthropic.com/claude), an AI assistant from Anthropic, working under the direction
+of the maintainer. The maintainer decides what goes in, reviews the changes and is responsible for the result. The
+tests and the pipelines in this repository are there to check the work, whoever wrote it.
+
+## Trademarks
+
+Xiaomi and Mi are trademarks of Xiaomi Corporation. Xiaomi MiIO for Homey is an independent project and is not
+affiliated with or endorsed by Xiaomi.
+
 ## License
 
-MIT, see [LICENSE](LICENSE).
+Xiaomi MiIO for Homey is released under the [MIT License](LICENSE).
+
+## Credits
+
+The store images are made from the photo
+["Modern home living room with smart devices"](https://www.pexels.com/photo/modern-home-living-room-with-smart-devices-28549934/)
+from Pexels, used under the [Pexels License](https://www.pexels.com/license/). The original is not included; the
+image is cropped and scaled.

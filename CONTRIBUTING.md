@@ -1,7 +1,7 @@
 # Contributing
 
-Thanks for your interest in Xiaomi MiIO for Homey. Bug reports, ideas and pull requests are welcome. This is a
-small hobby project, so replies can take a few days.
+Thanks for your interest in Xiaomi MiIO for Homey. Bug reports, ideas and pull requests are welcome. This is a small
+hobby project, so replies can take a few days.
 
 ## Language
 
@@ -11,7 +11,8 @@ Texts shown to users live in `locales/en.json` and `locales/nl.json`.
 ## Before you start
 
 - Open an issue first for anything bigger than a small fix, so we can agree on the approach.
-- A new device type is welcome: an issue with the model, the miIO properties and the commands is a good start.
+- Devices that are not supported yet are a known gap; an issue describing the model, its miIO properties and
+  its commands is a good start.
 - Never put real device names, addresses, tokens or other personal data in issues, tests or code.
 
 ## Setting up
@@ -36,8 +37,8 @@ Log in once with `npx homey login` and pick a Homey with `npx homey select`.
    - small functions that do one thing, with descriptive names (too verbose is better than not clear enough)
    - **no comments or docstrings in code**: explain in the pull request or the README instead
    - dependencies point inwards: `domain`, `application`, `infrastructure` (see `CLAUDE.md` for the layout)
-3. Add tests. Unit tests for logic, integration tests against the fake miIO device, end-to-end tests for the
-   pairing page. Test devices stay generic.
+3. Add tests. Unit tests for logic, integration tests for the devices against a fake miIO device, end-to-end
+   tests for the pairing page. Test devices come from `tests/support` and stay generic.
 4. Run everything locally:
 
    ```
@@ -55,9 +56,64 @@ Pull requests are squash merged, so the title of the pull request becomes the co
 ## Running on a Homey
 
 ```
-npx homey app validate --level publish
-npx homey app run --remote
+npx homey app dependencies install      # prepare the Python packages
+npx homey app validate                  # validate
+npx homey app run --remote              # run on the Homey with live logs
+npx homey app install                   # install permanently
 ```
 
-`run` does not reload changed code: stop and start it again after a change. Uploading a build is done by the
-release pipeline when a pull request is merged; do not upload by hand.
+`run` does not reload changed code: stop and start it again after a change.
+
+## Tests and quality
+
+```
+uv run ruff format .                    # format
+uv run ruff check .                     # lint
+uv run pytest                           # all tests with coverage
+uv run pytest tests/unit                # only unit tests
+```
+
+The rules live in `pyproject.toml`.
+
+- **Unit tests** (`tests/unit`, mirroring the layers and the driver folders) cover the domain rules, conversions,
+  services, the transport and the device classes. Their names read
+  `test_given_<state>_when_<action>_then_<result>`.
+- **Integration tests** are Gherkin scenarios (`tests/integration/features`) that run the real device classes,
+  services and UDP transport on loopback against a fake miIO device.
+- **End-to-end tests** are Gherkin scenarios (`tests/e2e/features`) that drive the pairing page in Chromium
+  (Playwright) against the real pairing code.
+- The steps live next to the features (`steps/`) and are written with pytest-bdd.
+
+## Pipelines and releases
+
+- **Pull request** (`.github/workflows/pull-request.yml`): checks the branch name, runs lint and formatting, all
+  tests with a coverage report (also as a comment on the pull request) and a build validation.
+- **Release** (`.github/workflows/release.yml`): on every merge to `main` it determines the version, runs the
+  same checks, uploads the app to Athom and creates a tag and GitHub release. The upload runs in the
+  `production` environment, which holds the secret `HOMEY_PAT`.
+- **CodeQL** (`.github/workflows/codeql.yml`) scans the Python code, the pairing pages and the workflows for
+  security problems on pushes and pull requests to `main`, and every week.
+- **Dependabot** updates the GitHub Actions and the Python packages weekly. Minor and patch updates arrive in
+  one pull request per ecosystem, and major updates in a separate one so they can be reviewed on their own.
+
+The version comes from the branch name of the merged pull request:
+
+| Branch name   | Version bump |
+|---------------|--------------|
+| `breaking/…`  | major        |
+| `feature/…`   | minor        |
+| `fix/…`       | patch        |
+
+The pipeline raises the latest `v<version>` tag by that kind of version. The title of the pull request becomes
+the squash commit title and the changelog text. The version in the manifest is replaced during the run and is
+not committed.
+
+## AI assistance
+
+This project is itself built with AI assistance (see the README). You may use AI tools for your contribution too,
+as long as you understand and have tested what you submit and it follows the rules above. You are responsible for
+your pull request, not the tool.
+
+## Reporting security problems
+
+Please follow [SECURITY.md](SECURITY.md) and do not open a public issue.
