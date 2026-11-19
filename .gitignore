@@ -1,0 +1,15 @@
+.homeybuild/
+python_packages/
+.python_cache/
+env.json
+__pycache__/
+*.pyc
+.venv/
+.idea/
+.DS_Store
+
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.ruff_cache/

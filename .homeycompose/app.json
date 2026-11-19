@@ -1,0 +1,51 @@
+{
+  "id": "dev.de-vries.xiaomi-miio",
+  "version": "0.1.0",
+  "compatibility": ">=13.0.0",
+  "runtime": "python",
+  "pythonVersion": "3.14",
+  "pythonDependencies": [],
+  "platforms": [
+    "local"
+  ],
+  "sdk": 3,
+  "brandColor": "#FF6700",
+  "name": {
+    "en": "Xiaomi MiIO",
+    "nl": "Xiaomi MiIO"
+  },
+  "description": {
+    "en": "Control Xiaomi devices over the local miIO protocol",
+    "nl": "Bedien Xiaomi-apparaten via het lokale miIO-protocol"
+  },
+  "category": [
+    "lights",
+    "climate"
+  ],
+  "tags": {
+    "en": [
+      "xiaomi",
+      "miio",
+      "mi home",
+      "lamp",
+      "fan"
+    ],
+    "nl": [
+      "xiaomi",
+      "miio",
+      "mi home",
+      "lamp",
+      "ventilator"
+    ]
+  },
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Martyn de Vries",
+    "email": "martyn@de-vries.dev"
+  },
+  "support": "mailto:martyn@de-vries.dev"
+}
