@@ -1,7 +1,6 @@
 import asyncio
 import time
 from collections.abc import Callable
-from dataclasses import dataclass
 from typing import Any
 
 from ..domain.errors import (
@@ -18,12 +17,6 @@ HANDSHAKE_MAX_AGE_SECONDS = 60.0
 MAX_MESSAGE_ID = 10_000
 RETRY_ID_STEP = 100
 STAMP_MODULUS = 2**32
-
-
-@dataclass(frozen=True, slots=True)
-class Handshake:
-    device_id: int
-    stamp: int
 
 
 class _DatagramHandler(asyncio.DatagramProtocol):
@@ -65,13 +58,9 @@ class MiioTransport:
         self._stamp_received_at = 0.0
         self._last_handshake: float | None = None
         self._last_id = 0
-        self._handshake_waiter: asyncio.Future[Handshake] | None = None
+        self._handshake_waiter: asyncio.Future[None] | None = None
         self._pending: dict[int, asyncio.Future[Any]] = {}
         self._lock = asyncio.Lock()
-
-    async def handshake(self) -> Handshake:
-        async with self._lock:
-            return await self._perform_handshake()
 
     async def send(
         self,
@@ -98,24 +87,18 @@ class MiioTransport:
                         self._last_handshake = None
                         self._close_endpoint()
 
-    def reset(self) -> None:
-        self.close()
-        self._device_stamp = 0
-        self._stamp_received_at = 0.0
-        self._last_handshake = None
-
     def close(self) -> None:
         error = MiioConnectionError("Transport closed")
         self._fail_waiters(error)
         self._close_endpoint()
 
-    async def _perform_handshake(self) -> Handshake:
+    async def _perform_handshake(self) -> None:
         endpoint = await self._ensure_endpoint()
         waiter = asyncio.get_running_loop().create_future()
         self._handshake_waiter = waiter
         endpoint.sendto(build_hello())
         try:
-            return await asyncio.wait_for(waiter, self._timeout)
+            await asyncio.wait_for(waiter, self._timeout)
         except TimeoutError as error:
             raise MiioTimeoutError(
                 f"Handshake timed out after {self._timeout}s"
@@ -198,17 +181,17 @@ class MiioTransport:
             return
         self._update_stamp(decoded.stamp)
         if decoded.payload is None:
-            self._complete_handshake(decoded.device_id, decoded.stamp)
+            self._complete_handshake(decoded.device_id)
         else:
             self._complete_request(decoded.payload)
 
-    def _complete_handshake(self, device_id: int, stamp: int) -> None:
+    def _complete_handshake(self, device_id: int) -> None:
         waiter = self._handshake_waiter
         if waiter is None or waiter.done():
             return
         self._device_id = device_id
         self._last_handshake = self._clock()
-        waiter.set_result(Handshake(device_id, stamp))
+        waiter.set_result(None)
 
     def _complete_request(self, payload: dict[str, Any]) -> None:
         future = self._pending.get(payload.get("id", -1))

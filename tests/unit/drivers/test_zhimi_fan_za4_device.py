@@ -103,7 +103,7 @@ class TestStandingFanDevice:
         fan = FakeFan()
         device = FakeHomeyDevice(fan, {"onoff": False})
 
-        await device._on_power_and_speed({"onoff": True})
+        await device._on_power_and_level({"onoff": True})
 
         assert fan.calls == [("power", True)]
 
@@ -113,7 +113,7 @@ class TestStandingFanDevice:
         fan = FakeFan()
         device = FakeHomeyDevice(fan, {"onoff": True})
 
-        await device._on_power_and_speed({"dim": 0.6})
+        await device._on_power_and_level({"dim": 0.6})
 
         assert fan.calls == [("speed", 60)]
 
@@ -122,7 +122,7 @@ class TestStandingFanDevice:
         device = FakeHomeyDevice(fan, {"onoff": True})
         device._natural_mode = True
 
-        await device._on_power_and_speed({"dim": 0.6})
+        await device._on_power_and_level({"dim": 0.6})
 
         assert fan.calls == [("natural", 60)]
 
@@ -132,35 +132,39 @@ class TestStandingFanDevice:
         fan = FakeFan()
         device = FakeHomeyDevice(fan, {"onoff": True})
 
-        await device._on_power_and_speed({"dim": 0})
+        await device._on_power_and_level({"dim": 0})
 
         assert fan.calls == [("power", False)]
         assert device.capabilities["onoff"] is False
 
     @pytest.mark.parametrize(
-        ("handler", "value", "expected"),
+        ("capability", "value", "expected"),
         [
-            ("_on_oscillating", True, ("oscillating", True)),
-            ("_on_angle", 120.0, ("angle", 120)),
-            ("_on_led_display", False, ("led", 2)),
-            ("_on_led_display", True, ("led", 0)),
-            ("_on_buzzer", False, ("buzzer", False)),
-            ("_on_child_lock", True, ("lock", True)),
+            ("fan_oscillating", True, ("oscillating", True)),
+            ("fan_angle", 120.0, ("angle", 120)),
+            ("led_display", False, ("led", 2)),
+            ("led_display", True, ("led", 0)),
+            ("buzzer_enabled", False, ("buzzer", False)),
+            ("locked", True, ("lock", True)),
         ],
     )
     async def test_given_a_fan_when_a_capability_changes_then_the_command_is_sent(
-        self, handler, value, expected
+        self, capability, value, expected
     ):
         fan = FakeFan()
         device = FakeHomeyDevice(fan)
 
-        await getattr(device, handler)(value)
+        device.register_listeners()
+
+        await device.listeners[capability](value)
 
         assert fan.calls == [expected]
 
     async def test_given_no_fan_when_a_command_is_sent_then_it_fails(self):
         with pytest.raises(MiioError):
-            await FakeHomeyDevice()._on_oscillating(True)
+            device = FakeHomeyDevice()
+            device.register_listeners()
+            await device.listeners["fan_oscillating"](True)
 
     def test_given_the_device_module_when_loaded_then_it_exports_a_polling_device(
         self,

@@ -29,6 +29,7 @@ class FakeDevice(asyncio.DatagramProtocol):
         self.hellos = 0
         self.requests: list[dict[str, Any]] = []
         self.stamps: list[int] = []
+        self.device_ids: list[int] = []
         self.transport: asyncio.DatagramTransport | None = None
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
@@ -45,6 +46,7 @@ class FakeDevice(asyncio.DatagramProtocol):
             return
         self.requests.append(decoded.payload)
         self.stamps.append(decoded.stamp)
+        self.device_ids.append(decoded.device_id)
         response = self.responder(decoded.payload)
         if response is not None:
             packet = encode(self.device_id, self.stamp, self.token, response)

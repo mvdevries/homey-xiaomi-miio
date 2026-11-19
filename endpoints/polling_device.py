@@ -1,5 +1,6 @@
 import asyncio
-from typing import Any
+from collections.abc import Callable
+from typing import Any, ClassVar, NamedTuple
 
 from homey.device import Device
 
@@ -9,9 +10,21 @@ from ..domain.polling import polling_seconds
 
 UNREACHABLE_MESSAGE = "Device unreachable"
 INVALID_TOKEN_MESSAGE = "The device token is invalid"
+DEBOUNCE_MILLISECONDS = 50
+POWER_CAPABILITIES = ["onoff", "dim"]
+
+
+def keep(value: Any) -> Any:
+    return value
+
+
+class Command(NamedTuple):
+    method: str
+    convert: Callable[[Any], Any] = keep
 
 
 class MiioPollingDevice(Device):
+    commands: ClassVar[dict[str, Command]] = {}
     _client: Any = None
     _poll_task: asyncio.Task | None = None
     _failures = 0
@@ -23,8 +36,17 @@ class MiioPollingDevice(Device):
     async def read_capabilities(self, client: Any) -> dict[str, Any]:
         raise NotImplementedError
 
-    def register_listeners(self) -> None:
+    async def set_level(self, client: Any, dim: float) -> None:
         raise NotImplementedError
+
+    def register_listeners(self) -> None:
+        for capability, command in self.commands.items():
+            self.register_capability_listener(capability, self._listener_for(command))
+
+    def register_power_and_level(self) -> None:
+        self.register_multiple_capability_listener(
+            POWER_CAPABILITIES, self._on_power_and_level, DEBOUNCE_MILLISECONDS
+        )
 
     async def on_init(self) -> None:
         self.register_listeners()
@@ -106,6 +128,25 @@ class MiioPollingDevice(Device):
             and self.get_available()
         ):
             await self.set_unavailable(UNREACHABLE_MESSAGE)
+
+    def _listener_for(self, command: Command) -> Callable[..., Any]:
+        async def listener(value: Any, **options: Any) -> None:
+            client = self._require_client()
+            await getattr(client, command.method)(command.convert(value))
+
+        return listener
+
+    async def _on_power_and_level(self, values: dict[str, Any], **options: Any) -> None:
+        client = self._require_client()
+        current_power = bool(self._current("onoff", False))
+        power = values.get("onoff", current_power)
+        if "dim" in values:
+            power = values["dim"] > 0
+        if power != current_power:
+            await client.set_power(power)
+            await self.set_capability_value("onoff", power)
+        if "dim" in values and power:
+            await self.set_level(client, values["dim"])
 
     def _require_client(self) -> Any:
         if self._client is None:
