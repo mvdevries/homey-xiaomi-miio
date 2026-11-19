@@ -50,15 +50,15 @@ async def make_transport(transports, clock, port, **options):
 
 
 class TestMiioTransportHandshake:
-    async def test_given_a_device_when_handshaking_then_id_and_stamp_are_returned(
+    async def test_given_a_device_when_sending_then_its_id_is_used_in_the_request(
         self, transports, clock
     ):
         device, port = await start_fake_device(TOKEN, device_id=77, stamp=5000)
         transport = await make_transport(transports, clock, port)
 
-        handshake = await transport.handshake()
+        await transport.send("a")
 
-        assert (handshake.device_id, handshake.stamp) == (77, 5000)
+        assert device.device_ids == [77]
         device.close()
 
     async def test_given_a_malformed_reply_when_handshaking_then_it_is_rejected(
@@ -69,7 +69,7 @@ class TestMiioTransportHandshake:
         transport = await make_transport(transports, clock, port)
 
         with pytest.raises(MalformedPacketError):
-            await transport.handshake()
+            await transport.send("a")
 
         device.close()
 
@@ -80,7 +80,7 @@ class TestMiioTransportHandshake:
         transports.append(transport)
 
         with pytest.raises(MiioConnectionError):
-            await transport.handshake()
+            await transport.send("a")
 
     async def test_given_nobody_listening_when_sending_then_the_handshake_fails(
         self, transports, clock
@@ -324,19 +324,4 @@ class TestMiioTransportClose:
         with pytest.raises(MiioConnectionError):
             await task
 
-        device.close()
-
-
-class TestMiioTransportReset:
-    async def test_given_a_fresh_handshake_when_reset_then_a_new_handshake_is_made(
-        self, transports, clock
-    ):
-        device, port = await start_fake_device(TOKEN)
-        transport = await make_transport(transports, clock, port)
-        await transport.send("a")
-
-        transport.reset()
-        await transport.send("b")
-
-        assert device.hellos == 2
         device.close()

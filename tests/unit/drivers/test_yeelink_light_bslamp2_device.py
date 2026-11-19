@@ -80,7 +80,7 @@ class TestBedsideLamp2Device:
         lamp = FakeLamp()
         device = FakeHomeyDevice(lamp, {"onoff": False})
 
-        await device._on_power_and_dim({"onoff": True})
+        await device._on_power_and_level({"onoff": True})
 
         assert lamp.calls == [("power", True)]
         assert device.capabilities["onoff"] is True
@@ -89,7 +89,7 @@ class TestBedsideLamp2Device:
         lamp = FakeLamp()
         device = FakeHomeyDevice(lamp, {"onoff": True})
 
-        await device._on_power_and_dim({"onoff": False})
+        await device._on_power_and_level({"onoff": False})
 
         assert lamp.calls == [("power", False)]
 
@@ -97,7 +97,7 @@ class TestBedsideLamp2Device:
         lamp = FakeLamp()
         device = FakeHomeyDevice(lamp, {"onoff": True})
 
-        await device._on_power_and_dim({"onoff": True})
+        await device._on_power_and_level({"onoff": True})
 
         assert lamp.calls == []
 
@@ -105,7 +105,7 @@ class TestBedsideLamp2Device:
         lamp = FakeLamp()
         device = FakeHomeyDevice(lamp, {"onoff": True})
 
-        await device._on_power_and_dim({"dim": 0.4})
+        await device._on_power_and_level({"dim": 0.4})
 
         assert lamp.calls == [("brightness", 40)]
 
@@ -115,7 +115,7 @@ class TestBedsideLamp2Device:
         lamp = FakeLamp()
         device = FakeHomeyDevice(lamp, {"onoff": False})
 
-        await device._on_power_and_dim({"dim": 0.8})
+        await device._on_power_and_level({"dim": 0.8})
 
         assert lamp.calls == [("power", True), ("brightness", 80)]
 
@@ -125,7 +125,7 @@ class TestBedsideLamp2Device:
         lamp = FakeLamp()
         device = FakeHomeyDevice(lamp, {"onoff": True})
 
-        await device._on_power_and_dim({"dim": 0})
+        await device._on_power_and_level({"dim": 0})
 
         assert lamp.calls == [("power", False)]
         assert device.capabilities["onoff"] is False
@@ -176,7 +176,7 @@ class TestBedsideLamp2Device:
 
     async def test_given_no_lamp_when_a_command_is_sent_then_it_fails(self):
         with pytest.raises(MiioError):
-            await FakeHomeyDevice()._on_power_and_dim({"onoff": True})
+            await FakeHomeyDevice()._on_power_and_level({"onoff": True})
 
     def test_given_the_device_module_when_loaded_then_it_exports_a_polling_device(
         self,

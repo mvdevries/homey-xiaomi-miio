@@ -60,12 +60,6 @@ def decode(data: bytes, token: bytes) -> DecodedPacket:
     )
 
 
-def extract_token(hello_response: bytes) -> bytes:
-    if len(hello_response) < HEADER_SIZE:
-        raise MalformedPacketError("Hello response too short")
-    return bytes(hello_response[CHECKSUM_OFFSET:HEADER_SIZE])
-
-
 def _decode_payload(encrypted: bytes, token: bytes) -> dict[str, Any]:
     try:
         decrypted = MiioCipher(token).decrypt(encrypted)

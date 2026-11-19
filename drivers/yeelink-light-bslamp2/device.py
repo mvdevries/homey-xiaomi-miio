@@ -10,10 +10,8 @@ from app.domain.bedside_lamp import (
     state_to_capabilities,
     temperature_to_kelvin,
 )
-from app.endpoints.polling_device import MiioPollingDevice
+from app.endpoints.polling_device import DEBOUNCE_MILLISECONDS, MiioPollingDevice
 
-DEBOUNCE_MILLISECONDS = 50
-POWER_CAPABILITIES = ["onoff", "dim"]
 COLOR_CAPABILITIES = [
     "light_temperature",
     "light_mode",
@@ -24,9 +22,8 @@ COLOR_CAPABILITIES = [
 
 class BedsideLamp2Device(MiioPollingDevice):
     def register_listeners(self) -> None:
-        self.register_multiple_capability_listener(
-            POWER_CAPABILITIES, self._on_power_and_dim, DEBOUNCE_MILLISECONDS
-        )
+        super().register_listeners()
+        self.register_power_and_level()
         self.register_multiple_capability_listener(
             COLOR_CAPABILITIES, self._on_color, DEBOUNCE_MILLISECONDS
         )
@@ -37,17 +34,8 @@ class BedsideLamp2Device(MiioPollingDevice):
     async def read_capabilities(self, client: BedsideLampService) -> dict[str, Any]:
         return state_to_capabilities(await client.get_state())
 
-    async def _on_power_and_dim(self, values: dict[str, Any], **options: Any) -> None:
-        lamp = self._require_client()
-        current_power = bool(self._current("onoff", False))
-        power = values.get("onoff", current_power)
-        if "dim" in values:
-            power = values["dim"] > 0
-        if power != current_power:
-            await lamp.set_power(power)
-            await self.set_capability_value("onoff", power)
-        if "dim" in values and power:
-            await lamp.set_brightness(dim_to_brightness(values["dim"]))
+    async def set_level(self, client: BedsideLampService, dim: float) -> None:
+        await client.set_brightness(dim_to_brightness(dim))
 
     async def _on_color(self, values: dict[str, Any], **options: Any) -> None:
         lamp = self._require_client()

@@ -17,9 +17,11 @@ def nearest(value: float, options: Iterable[int]) -> int:
 
 
 def as_int(value: Any, default: int = 0) -> int:
+    if value is None:
+        return default
     try:
         return int(value)
-    except TypeError, ValueError:
+    except ValueError:
         return default
 
 

@@ -106,20 +106,6 @@ class TestDecode:
             packet.decode(build_packet(body), TOKEN)
 
 
-class TestExtractToken:
-    def test_given_a_hello_response_when_extracted_then_the_token_is_returned(self):
-        response = bytearray(packet.build_hello())
-        response[16:32] = TOKEN
-
-        token = packet.extract_token(bytes(response))
-
-        assert token == TOKEN
-
-    def test_given_a_short_response_when_extracted_then_it_is_rejected(self):
-        with pytest.raises(MalformedPacketError):
-            packet.extract_token(b"short")
-
-
 class TestMiioDeviceError:
     @pytest.mark.parametrize(
         ("code", "recoverable"), [(-30001, True), (-9999, True), (-1, False)]
