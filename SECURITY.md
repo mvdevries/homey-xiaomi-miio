@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Only the latest released version of Xiaomi MiIO receives security fixes.
+Only the latest released version of Xiaomi MiIO for Homey receives security fixes.
 
 ## Reporting a vulnerability
 
@@ -22,6 +22,6 @@ with credit to you, if you want that.
 
 ## What is out of scope
 
-- Vulnerabilities in Homey, the devices, the `cryptography` library or other dependencies themselves; report those to their
-  maintainers. Dependency updates are handled by Dependabot.
+- Vulnerabilities in Homey, the Xiaomi devices, the `cryptography` library or other dependencies themselves;
+  report those to their maintainers. Dependency updates are handled by Dependabot.
 - Problems that need physical access to the Homey or a compromised local network.
