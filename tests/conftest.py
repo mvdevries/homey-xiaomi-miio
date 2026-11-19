@@ -29,3 +29,16 @@ def register_homey_sdk_stub() -> None:
 
 register_project_as_package()
 register_homey_sdk_stub()
+
+
+pytest_plugins = [
+    "tests.integration.steps.scenario_context",
+    "tests.integration.steps.device_steps",
+    "tests.integration.steps.homey_steps",
+    "tests.integration.steps.pairing_steps",
+    "tests.e2e.steps.page_steps",
+]
+
+
+def pytest_collection_modifyitems(items):
+    items.sort(key=lambda item: item.get_closest_marker("e2e") is not None)

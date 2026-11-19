@@ -1,40 +1,51 @@
 import hashlib
 
 import pytest
-from app.miio.crypto import MiioCipher
-from app.miio.errors import InvalidTokenError
+from app.domain.errors import InvalidTokenError
+from app.infrastructure.crypto import MiioCipher
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 TOKEN = bytes(range(16))
 
 
-def test_round_trip():
-    cipher = MiioCipher(TOKEN)
+class TestMiioCipher:
+    def test_given_encrypted_data_when_decrypted_then_the_original_is_returned(self):
+        cipher = MiioCipher(TOKEN)
 
-    assert cipher.decrypt(cipher.encrypt(b'{"id":1}')) == b'{"id":1}'
+        decrypted = cipher.decrypt(cipher.encrypt(b'{"id":1}'))
 
+        assert decrypted == b'{"id":1}'
 
-def test_key_and_iv_are_derived_from_the_token():
-    key = hashlib.md5(TOKEN).digest()
-    iv = hashlib.md5(key + TOKEN).digest()
-    decryptor = Cipher(algorithms.AES128(key), modes.CBC(iv)).decryptor()
+    def test_given_a_token_when_encrypting_then_key_and_iv_are_derived_from_the_token(
+        self,
+    ):
+        key = hashlib.md5(TOKEN).digest()
+        iv = hashlib.md5(key + TOKEN).digest()
+        decryptor = Cipher(algorithms.AES128(key), modes.CBC(iv)).decryptor()
 
-    encrypted = MiioCipher(TOKEN).encrypt(b"hello")
-    padded = decryptor.update(encrypted) + decryptor.finalize()
+        encrypted = MiioCipher(TOKEN).encrypt(b"hello")
+        padded = decryptor.update(encrypted) + decryptor.finalize()
 
-    assert padded == b"hello" + bytes([11]) * 11
+        assert padded == b"hello" + bytes([11]) * 11
 
+    def test_given_17_bytes_when_encrypting_then_the_length_is_a_block_multiple(
+        self,
+    ):
+        encrypted = MiioCipher(TOKEN).encrypt(b"x" * 17)
 
-def test_encrypted_length_is_a_multiple_of_the_block_size():
-    assert len(MiioCipher(TOKEN).encrypt(b"x" * 17)) == 32
+        assert len(encrypted) == 32
 
+    @pytest.mark.parametrize("size", [0, 15, 17])
+    def test_given_a_token_of_the_wrong_size_when_created_then_it_is_rejected(
+        self, size
+    ):
+        with pytest.raises(InvalidTokenError):
+            MiioCipher(bytes(size))
 
-@pytest.mark.parametrize("size", [0, 15, 17])
-def test_rejects_tokens_of_the_wrong_size(size):
-    with pytest.raises(InvalidTokenError):
-        MiioCipher(bytes(size))
+    def test_given_ciphertext_with_invalid_padding_when_decrypted_then_it_is_rejected(
+        self,
+    ):
+        cipher = MiioCipher(TOKEN)
 
-
-def test_rejects_ciphertext_with_invalid_padding():
-    with pytest.raises(ValueError, match="padding"):
-        MiioCipher(TOKEN).decrypt(bytes(16))
+        with pytest.raises(ValueError, match="padding"):
+            cipher.decrypt(bytes(16))
