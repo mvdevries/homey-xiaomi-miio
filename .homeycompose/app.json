@@ -47,5 +47,8 @@
     "name": "Martyn de Vries",
     "email": "1821972+mvdevries@users.noreply.github.com"
   },
-  "support": "mailto:1821972+mvdevries@users.noreply.github.com"
+  "support": "mailto:1821972+mvdevries@users.noreply.github.com",
+  "pythonPackages": [
+    "cryptography"
+  ]
 }
