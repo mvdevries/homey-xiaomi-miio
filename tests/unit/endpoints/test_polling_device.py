@@ -1,10 +1,12 @@
 import asyncio
+from typing import ClassVar
 
 import pytest
 from app.domain.errors import InvalidTokenError, MiioError, MiioTimeoutError
 from app.endpoints.polling_device import (
     INVALID_TOKEN_MESSAGE,
     UNREACHABLE_MESSAGE,
+    Command,
     MiioPollingDevice,
 )
 
@@ -202,3 +204,119 @@ class TestMiioPollingDeviceCurrent:
 
         assert stored == 0.3
         assert fallback == 1
+
+
+class RecordingClient:
+    def __init__(self):
+        self.calls = []
+
+    async def set_x(self, value):
+        self.calls.append(("x", value))
+
+    async def set_power(self, on):
+        self.calls.append(("power", on))
+
+
+class CommandDevice(FakeHomeyMixin, MiioPollingDevice):
+    commands: ClassVar[dict[str, Command]] = {"x_capability": Command("set_x", int)}
+
+    def __init__(self, client=None, capabilities=None):
+        self.setup_fake(capabilities=capabilities)
+        self._client = client
+
+    async def set_level(self, client, dim):
+        client.calls.append(("level", dim))
+
+
+class TestMiioPollingDeviceRegisterListeners:
+    def test_given_commands_when_registering_then_each_capability_has_a_listener(
+        self,
+    ):
+        device = CommandDevice()
+
+        device.register_listeners()
+
+        assert set(device.listeners) == {"x_capability"}
+
+    async def test_given_a_command_when_it_changes_then_the_converted_value_is_sent(
+        self,
+    ):
+        client = RecordingClient()
+        device = CommandDevice(client)
+        device.register_listeners()
+
+        await device.listeners["x_capability"]("7")
+
+        assert client.calls == [("x", 7)]
+
+    async def test_given_no_client_when_a_command_arrives_then_it_fails(self):
+        device = CommandDevice()
+        device.register_listeners()
+
+        with pytest.raises(MiioError):
+            await device.listeners["x_capability"]("7")
+
+    def test_given_power_and_level_when_registering_then_one_listener_covers_both(
+        self,
+    ):
+        device = CommandDevice()
+
+        device.register_power_and_level()
+
+        assert set(device.listeners) == {("onoff", "dim")}
+
+    async def test_given_no_level_support_when_the_level_is_set_then_it_fails(
+        self,
+    ):
+        with pytest.raises(NotImplementedError):
+            await SampleDevice().set_level(None, 0.5)
+
+
+class TestMiioPollingDevicePowerAndLevel:
+    async def test_given_a_device_that_is_off_when_turned_on_then_power_is_sent(self):
+        client = RecordingClient()
+        device = CommandDevice(client, {"onoff": False})
+
+        await device._on_power_and_level({"onoff": True})
+
+        assert client.calls == [("power", True)]
+        assert device.capabilities["onoff"] is True
+
+    async def test_given_a_device_that_is_on_when_turned_on_then_nothing_is_sent(self):
+        client = RecordingClient()
+        device = CommandDevice(client, {"onoff": True})
+
+        await device._on_power_and_level({"onoff": True})
+
+        assert client.calls == []
+
+    async def test_given_a_device_that_is_on_when_dimmed_then_only_the_level_is_set(
+        self,
+    ):
+        client = RecordingClient()
+        device = CommandDevice(client, {"onoff": True})
+
+        await device._on_power_and_level({"dim": 0.4})
+
+        assert client.calls == [("level", 0.4)]
+
+    async def test_given_a_device_that_is_off_when_dimmed_then_it_turns_on_first(
+        self,
+    ):
+        client = RecordingClient()
+        device = CommandDevice(client, {"onoff": False})
+
+        await device._on_power_and_level({"dim": 0.8})
+
+        assert client.calls == [("power", True), ("level", 0.8)]
+
+    async def test_given_a_device_that_is_on_when_dimmed_to_zero_then_it_turns_off(
+        self,
+    ):
+        client = RecordingClient()
+        device = CommandDevice(client, {"onoff": True})
+
+        await device._on_power_and_level({"dim": 0})
+
+        assert client.calls == [("power", False)]
+        assert device.capabilities["onoff"] is False

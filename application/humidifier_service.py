@@ -7,15 +7,12 @@ from ..domain.humidifier import (
     HumidifierState,
     parse_state,
 )
-from ..domain.values import as_switch, nearest
-from .ports import DeviceTransport
+from ..domain.values import nearest
+from .device_service import MiioService
 from .properties import read_properties
 
 
-class HumidifierService:
-    def __init__(self, transport: DeviceTransport) -> None:
-        self._transport = transport
-
+class HumidifierService(MiioService):
     async def get_state(self) -> HumidifierState:
         values = await read_properties(
             self._transport, STATE_PROPERTIES, OPTIONAL_PROPERTIES
@@ -23,7 +20,7 @@ class HumidifierService:
         return parse_state(values)
 
     async def set_power(self, on: bool) -> None:
-        await self._transport.send("set_power", [as_switch(on)])
+        await self._switch("set_power", on)
 
     async def set_mode(self, mode: str) -> None:
         try:
@@ -39,16 +36,13 @@ class HumidifierService:
         await self._transport.send("set_limit_hum", [target])
 
     async def set_dry(self, on: bool) -> None:
-        await self._transport.send("set_dry", [as_switch(on)])
+        await self._switch("set_dry", on)
 
     async def set_led_brightness(self, brightness: int) -> None:
         await self._transport.send("set_led_b", [str(brightness)])
 
     async def set_buzzer(self, on: bool) -> None:
-        await self._transport.send("set_buzzer", [as_switch(on)])
+        await self._switch("set_buzzer", on)
 
     async def set_child_lock(self, on: bool) -> None:
-        await self._transport.send("set_child_lock", [as_switch(on)])
-
-    def close(self) -> None:
-        self._transport.close()
+        await self._switch("set_child_lock", on)
