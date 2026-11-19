@@ -1,4 +1,5 @@
 import pytest
+from app.domain.discovery import DiscoveredDevice
 from playwright.sync_api import expect
 from pytest_bdd import given, parsers, then, when
 
@@ -25,6 +26,27 @@ def a_device_answers_at_the_address(backend):
 @given("no device answers at the address")
 def no_device_answers_at_the_address(backend):
     backend.lamp.silent = True
+
+
+@given(parsers.parse("a device is found on the network at {address}"))
+@when(parsers.parse("a device is found on the network at {address}"))
+def a_device_is_found_on_the_network(backend, address):
+    backend.discovered_devices.append(DiscoveredDevice(address, 0x1234))
+
+
+@given("no device is found on the network")
+def no_device_is_found_on_the_network(backend):
+    backend.discovered_devices.clear()
+
+
+@when(parsers.parse("I choose the found device at {address}"))
+def i_choose_the_found_device(page, address):
+    page.locator(".device-row", has_text=address).click()
+
+
+@when("I search again")
+def i_search_again(page):
+    page.locator("#scan").click()
 
 
 @when(parsers.parse("I open the pairing page of the {device}"))
@@ -103,3 +125,18 @@ def no_device_is_created(backend):
 @then("the pairing is finished")
 def the_pairing_is_finished(page):
     page.wait_for_function("window.pairDone === true")
+
+
+@then(parsers.parse("I see the found device at {address}"))
+def i_see_the_found_device(page, address):
+    expect(page.locator(".device-row", has_text=address)).to_be_visible()
+
+
+@then(parsers.parse('I see the text "{text}"'))
+def i_see_the_text(page, text):
+    expect(page.locator("#found")).to_contain_text(text)
+
+
+@then(parsers.parse("the address field contains {address}"))
+def the_address_field_contains(page, address):
+    expect(page.locator("#address")).to_have_value(address)

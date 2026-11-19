@@ -36,6 +36,7 @@ pytest_plugins = [
     "tests.integration.steps.device_steps",
     "tests.integration.steps.homey_steps",
     "tests.integration.steps.pairing_steps",
+    "tests.integration.steps.discovery_steps",
     "tests.e2e.steps.page_steps",
 ]
 

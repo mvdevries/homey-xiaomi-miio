@@ -67,3 +67,35 @@ class TestMiioDriverOnPair:
         await MiioDriver().on_pair(FakeSession())
 
         assert "validate_device" in handlers
+
+
+class FakeDiscoveryService:
+    def __init__(self, error=None):
+        self.error = error
+
+    async def discover_devices(self):
+        if self.error is not None:
+            raise self.error
+        return [{"address": "192.0.2.10", "deviceId": "00001234"}]
+
+
+class TestMiioDriverDiscoverDevices:
+    async def test_given_devices_on_the_network_when_discovered_then_they_are_returned(
+        self, monkeypatch
+    ):
+        monkeypatch.setattr(
+            pairing_driver, "create_discovery_service", FakeDiscoveryService
+        )
+
+        result = await MiioDriver().discover_devices()
+
+        assert result == [{"address": "192.0.2.10", "deviceId": "00001234"}]
+
+    async def test_given_a_network_failure_when_discovered_then_it_is_reported(
+        self, monkeypatch
+    ):
+        service = FakeDiscoveryService(error=MiioTimeoutError("timeout"))
+        monkeypatch.setattr(pairing_driver, "create_discovery_service", lambda: service)
+
+        with pytest.raises(Exception, match="discovery_failed"):
+            await MiioDriver().discover_devices()

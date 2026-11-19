@@ -1,8 +1,10 @@
 from .application.bedside_lamp_service import BedsideLampService
+from .application.discovery_service import DiscoveryService
 from .application.humidifier_service import HumidifierService
 from .application.pairing_service import PairingService
 from .application.standing_fan_service import StandingFanService
 from .domain.token import token_from_hex
+from .infrastructure.discovery import UdpDeviceScanner
 from .infrastructure.transport import MiioTransport
 
 
@@ -24,3 +26,11 @@ def create_humidifier(address: str, token_hex: str) -> HumidifierService:
 
 def create_pairing_service() -> PairingService:
     return PairingService(transport_factory=create_transport)
+
+
+def create_scanner() -> UdpDeviceScanner:
+    return UdpDeviceScanner()
+
+
+def create_discovery_service() -> DiscoveryService:
+    return DiscoveryService(scanner=create_scanner())

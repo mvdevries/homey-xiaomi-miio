@@ -1,7 +1,7 @@
 {
   "pair": {
     "title": "Add a Xiaomi device",
-    "intro": "Enter the details of your device. The IP address and token are found in the Mi Home app or in your router.",
+    "intro": "Choose a device found on your network, or enter the details yourself. The token is found in the Mi Home app or with a token extractor.",
     "name": "Name",
     "address": "IP address",
     "token": "Device token",
@@ -13,10 +13,16 @@
     "add": "Add device",
     "adding": "Adding…",
     "added": "Device added",
+    "found": "Found on your network",
+    "scan": "Search again",
+    "scanning": "Searching…",
+    "noDevices": "No devices found. Enter the IP address yourself.",
+    "deviceId": "device",
     "errors": {
       "name_and_address_required": "Enter a name and an IP address.",
       "token_invalid": "The token must be 32 hexadecimal characters.",
-      "device_unreachable": "Cannot reach the device. Check the IP address and token."
+      "device_unreachable": "Cannot reach the device. Check the IP address and token.",
+      "discovery_failed": "Searching the network failed. Enter the IP address yourself."
     }
   }
 }
