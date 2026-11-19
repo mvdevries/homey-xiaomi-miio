@@ -1,4 +1,5 @@
 import pytest
+from app.domain.discovery import DiscoveredDevice
 from playwright.sync_api import expect
 from pytest_bdd import given, parsers, then, when
 
@@ -25,6 +26,57 @@ def a_device_answers_at_the_address(backend):
 @given("no device answers at the address")
 def no_device_answers_at_the_address(backend):
     backend.lamp.silent = True
+
+
+@given(parsers.parse("a device is found on the network at {address}"))
+@when(parsers.parse("a device is found on the network at {address}"))
+def a_device_is_found_on_the_network(backend, address):
+    backend.discovered_devices.append(DiscoveredDevice(address, 0x1234))
+
+
+@given(parsers.parse('a device named "{name}" is found on the network at {address}'))
+def a_named_device_is_found_on_the_network(backend, name, address):
+    backend.discovered_devices.append(DiscoveredDevice(address, 0x1234, name))
+
+
+@given("no device is found on the network")
+def no_device_is_found_on_the_network(backend):
+    backend.discovered_devices.clear()
+
+
+@when(parsers.parse("I choose the found device at {address}"))
+def i_choose_the_found_device(page, address):
+    page.locator(".device-row", has_text=address).click()
+
+
+@when("I continue")
+def i_continue(page):
+    page.locator("#continue").click(force=True)
+
+
+@when("I search again")
+def i_search_again(page):
+    page.locator("#scan").click()
+
+
+@when(parsers.parse("I open the start page of the {device}"))
+def i_open_the_start_page(open_pairing_page, device):
+    open_pairing_page(DRIVER_IDS[device], view="start")
+
+
+@when(parsers.parse("I open the search page of the {device}"))
+def i_open_the_search_page(open_pairing_page, device):
+    open_pairing_page(DRIVER_IDS[device], view="discover")
+
+
+@when("I choose to search for devices")
+def i_choose_to_search(page):
+    page.locator("#search").click()
+
+
+@when("I choose to enter the details myself")
+def i_choose_to_enter_the_details(page):
+    page.locator("#manual").click()
 
 
 @when(parsers.parse("I open the pairing page of the {device}"))
@@ -77,7 +129,7 @@ def the_page_title_is(page, title):
 
 @then(parsers.parse('I see the button "{text}"'))
 def i_see_the_button(page, text):
-    expect(page.locator("#add")).to_have_text(text)
+    expect(page.get_by_role("button", name=text)).to_be_visible()
 
 
 @then(parsers.parse('I see the message "{text}"'))
@@ -103,3 +155,51 @@ def no_device_is_created(backend):
 @then("the pairing is finished")
 def the_pairing_is_finished(page):
     page.wait_for_function("window.pairDone === true")
+
+
+@then(parsers.parse("I see the found device at {address}"))
+def i_see_the_found_device(page, address):
+    expect(page.locator(".device-row", has_text=address)).to_be_visible()
+
+
+@then(parsers.parse('I see the text "{text}"'))
+def i_see_the_text(page, text):
+    expect(page.locator("#found")).to_contain_text(text)
+
+
+@then(parsers.parse("the address field contains {address}"))
+def the_address_field_contains(page, address):
+    expect(page.locator("#address")).to_have_value(address)
+
+
+@then("I see the search page")
+def i_see_the_search_page(page):
+    expect(page.locator("#found")).to_be_visible()
+
+
+@then(parsers.parse('I see the found device named "{name}" at {address}'))
+def i_see_the_named_found_device(page, name, address):
+    row = page.locator(".device-row", has_text=name)
+    expect(row).to_contain_text(address)
+
+
+@then(parsers.parse('I see the warning "{text}"'))
+def i_see_the_warning(page, text):
+    expect(page.get_by_role("note")).to_contain_text(text)
+
+
+@then("I still see the search page")
+def i_still_see_the_search_page(page):
+    expect(page.locator("#found")).to_be_visible()
+    expect(page.locator("#name")).to_have_count(0)
+
+
+@then(parsers.parse('the name field contains "{name}"'))
+def the_name_field_contains(page, name):
+    expect(page.locator("#name")).to_have_value(name)
+
+
+@then(parsers.parse('I see the identifier "{identifier}" in the row of {address}'))
+def i_see_the_identifier(page, identifier, address):
+    row = page.locator(".device-row", has_text=address)
+    expect(row.locator(".device-identifier")).to_have_text(identifier)

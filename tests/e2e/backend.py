@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlsplit
 
+from app.domain.discovery import DiscoveredDevice
 from app.endpoints.pairing_driver import MiioDriver
 
 from tests.support.fake_miio_devices import DEVICE_ADDRESS, FakeBedsideLamp
@@ -54,6 +55,19 @@ HOMEY_STUB_TEMPLATE = """
     createDevice: function (device) {
       return post("__CREATE__", device);
     },
+    showView: function (view) {
+      const parameters = new URLSearchParams(location.search);
+      parameters.set("view", view);
+      location.search = parameters.toString();
+      return Promise.resolve();
+    },
+    setViewStoreValue: function (view, key, value) {
+      sessionStorage.setItem(view + "." + key, value);
+      return Promise.resolve();
+    },
+    getViewStoreValue: function (view, key) {
+      return Promise.resolve(sessionStorage.getItem(view + "." + key));
+    },
     done: function () {
       window.pairDone = true;
     },
@@ -87,10 +101,18 @@ def build_homey_stub() -> bytes:
     return script.encode()
 
 
-def build_pair_page(driver_id: str) -> bytes:
-    body = (DRIVERS_DIRECTORY / driver_id / "pair" / "pair.html").read_text()
+def build_pair_page(driver_id: str, view: str) -> bytes:
+    body = (DRIVERS_DIRECTORY / driver_id / "pair" / f"{view}.html").read_text()
     page = PAGE_TEMPLATE.replace("__STUB__", HOMEY_STUB_PATH).replace("__BODY__", body)
     return page.encode()
+
+
+class FakeScanner:
+    def __init__(self, devices: list[DiscoveredDevice]) -> None:
+        self._devices = devices
+
+    async def scan(self) -> list[DiscoveredDevice]:
+        return self._devices
 
 
 class Backend:
@@ -100,12 +122,17 @@ class Backend:
         self._server: ThreadingHTTPServer | None = None
         self.lamp = FakeBedsideLamp()
         self.created_devices: list[dict[str, Any]] = []
+        self.discovered_devices: list[DiscoveredDevice] = []
         self.base_url = ""
 
     def start(self) -> None:
         self._harness.start()
         self._harness.call(self.lamp.start())
         install_loopback_transport(self._monkeypatch, {DEVICE_ADDRESS: self.lamp.port})
+        self._monkeypatch.setattr(
+            "app.container.create_scanner",
+            lambda: FakeScanner(self.discovered_devices),
+        )
         self._server = ThreadingHTTPServer(("127.0.0.1", 0), self._build_handler())
         self.base_url = f"http://127.0.0.1:{self._server.server_address[1]}"
         threading.Thread(target=self._server.serve_forever, daemon=True).start()
@@ -120,6 +147,9 @@ class Backend:
     def validate_device(self, data: dict[str, Any]) -> dict[str, Any]:
         return self._harness.call(MiioDriver().validate_device(data))
 
+    def discover_devices(self) -> list[dict[str, Any]]:
+        return self._harness.call(MiioDriver().discover_devices())
+
     def _build_handler(self) -> type[BaseHTTPRequestHandler]:
         backend = self
         homey_stub = build_homey_stub()
@@ -133,8 +163,10 @@ class Backend:
                 if url.path == HOMEY_STUB_PATH:
                     self._send(200, homey_stub, "application/javascript")
                 elif url.path == PAIR_PATH:
-                    driver_id = parse_qs(url.query)["driver"][0]
-                    self._send(200, build_pair_page(driver_id), "text/html")
+                    query = parse_qs(url.query)
+                    driver_id = query["driver"][0]
+                    view = query.get("view", ["pair"])[0]
+                    self._send(200, build_pair_page(driver_id, view), "text/html")
                 else:
                     self._send(404, b"not found", "text/plain")
 
@@ -144,6 +176,8 @@ class Backend:
                 body = json.loads(self.rfile.read(length) or b"{}")
                 if path == EMIT_PREFIX + "validate_device":
                     self._validate(body)
+                elif path == EMIT_PREFIX + "discover_devices":
+                    self._send_json(200, backend.discover_devices())
                 elif path == CREATE_DEVICE_PATH:
                     backend.created_devices.append(body)
                     self._send_json(200, {})

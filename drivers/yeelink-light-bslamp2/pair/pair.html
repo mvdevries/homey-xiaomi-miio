@@ -131,6 +131,34 @@
     opacity: 0.75;
   }
 
+  .device-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 56px;
+    padding: 8px 16px;
+    cursor: pointer;
+    text-transform: none;
+  }
+
+  .device-row + .device-row {
+    border-top: 1px solid var(--line-color);
+  }
+
+  .device-row.selected {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  .device-row:active {
+    opacity: 0.75;
+  }
+
+  .empty-row {
+    padding: 16px;
+  }
+
   .toast {
     position: fixed;
     left: 50%;
@@ -249,4 +277,14 @@
   });
 
   activateOnClickOrKey(document.getElementById("add"), addDevice);
+  function fillFromStore(key, elementId) {
+    Homey.getViewStoreValue("pair", key).then((value) => {
+      if (value) {
+        document.getElementById(elementId).value = value;
+      }
+    });
+  }
+
+  fillFromStore("address", "address");
+  fillFromStore("name", "name");
 </script>

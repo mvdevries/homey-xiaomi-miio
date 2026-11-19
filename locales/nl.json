@@ -2,6 +2,13 @@
   "pair": {
     "title": "Xiaomi-apparaat toevoegen",
     "intro": "Vul de gegevens van je apparaat in. Het IP-adres en de token vind je in de Mi Home-app of in je router.",
+    "startIntro": "Hoe wil je je apparaat toevoegen?",
+    "addressWarning": "Geef je apparaat een vast IP-adres in je router, zodat Homey het blijft vinden.",
+    "search": "Zoek apparaten op mijn netwerk",
+    "searchHelp": "De app zoekt naar Xiaomi-apparaten die op je netwerk antwoorden.",
+    "manual": "Gegevens zelf invullen",
+    "manualHelp": "Je kent het IP-adres en de token van het apparaat.",
+    "discoverIntro": "Kies je apparaat. Daarna vul je de naam en de token in.",
     "name": "Naam",
     "address": "IP-adres",
     "token": "Apparaattoken",
@@ -13,10 +20,16 @@
     "add": "Apparaat toevoegen",
     "adding": "Toevoegen…",
     "added": "Apparaat toegevoegd",
+    "found": "Gevonden op je netwerk",
+    "scan": "Opnieuw zoeken",
+    "continue": "Doorgaan",
+    "scanning": "Zoeken…",
+    "noDevices": "Geen apparaten gevonden. Vul het IP-adres zelf in.",
     "errors": {
       "name_and_address_required": "Vul een naam en een IP-adres in.",
       "token_invalid": "De token moet uit 32 hexadecimale tekens bestaan.",
-      "device_unreachable": "Het apparaat is niet bereikbaar. Controleer het IP-adres en de token."
+      "device_unreachable": "Het apparaat is niet bereikbaar. Controleer het IP-adres en de token.",
+      "discovery_failed": "Zoeken op het netwerk is mislukt. Vul het IP-adres zelf in."
     }
   }
 }

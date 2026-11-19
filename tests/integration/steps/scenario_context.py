@@ -28,6 +28,7 @@ class ScenarioContext:
     homey_device: Any = None
     pairing_result: dict[str, Any] | None = None
     pairing_error: Exception | None = None
+    found_devices: list[dict[str, Any]] = field(default_factory=list)
 
     def call(self, coroutine: Any) -> Any:
         return self.harness.call(coroutine)
