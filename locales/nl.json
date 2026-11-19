@@ -1,7 +1,13 @@
 {
   "pair": {
     "title": "Xiaomi-apparaat toevoegen",
-    "intro": "Kies een apparaat dat op je netwerk is gevonden, of vul de gegevens zelf in. De token vind je in de Mi Home-app of met een token-extractor.",
+    "intro": "Vul de gegevens van je apparaat in. Het IP-adres en de token vind je in de Mi Home-app of in je router.",
+    "startIntro": "Hoe wil je je apparaat toevoegen?",
+    "search": "Zoek apparaten op mijn netwerk",
+    "searchHelp": "De app zoekt naar Xiaomi-apparaten die op je netwerk antwoorden.",
+    "manual": "Gegevens zelf invullen",
+    "manualHelp": "Je kent het IP-adres en de token van het apparaat.",
+    "discoverIntro": "Kies je apparaat. Daarna vul je de naam en de token in.",
     "name": "Naam",
     "address": "IP-adres",
     "token": "Apparaattoken",

@@ -73,6 +73,12 @@
       "icon": "/drivers/yeelink-light-bslamp2/assets/icon.svg",
       "pair": [
         {
+          "id": "start"
+        },
+        {
+          "id": "discover"
+        },
+        {
           "id": "pair"
         }
       ],
@@ -136,6 +142,12 @@
       },
       "icon": "/drivers/zhimi-fan-za4/assets/icon.svg",
       "pair": [
+        {
+          "id": "start"
+        },
+        {
+          "id": "discover"
+        },
         {
           "id": "pair"
         }
@@ -201,6 +213,12 @@
       },
       "icon": "/drivers/zhimi-humidifier-ca1/assets/icon.svg",
       "pair": [
+        {
+          "id": "start"
+        },
+        {
+          "id": "discover"
+        },
         {
           "id": "pair"
         }

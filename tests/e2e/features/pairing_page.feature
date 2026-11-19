@@ -59,21 +59,36 @@ Feature: The pairing page
     And I add the device
     Then I see the message "Het apparaat is niet bereikbaar. Controleer het IP-adres en de token."
 
+  Scenario: The start page offers searching or entering the details
+    When I open the start page of the bedside lamp
+    Then I see the button "Search for devices on my network"
+    And I see the button "Enter the details myself"
+
+  Scenario: Choosing to search opens the search page
+    When I open the start page of the bedside lamp
+    And I choose to search for devices
+    Then I see the search page
+
+  Scenario: Choosing to enter the details opens the form
+    When I open the start page of the bedside lamp
+    And I choose to enter the details myself
+    Then I see the fields for the name, address, token and polling interval
+
   Scenario: A device found on the network fills in the address
     Given a device is found on the network at 192.0.2.10
-    When I open the pairing page of the bedside lamp
+    When I open the search page of the bedside lamp
     Then I see the found device at 192.0.2.10
     When I choose the found device at 192.0.2.10
     Then the address field contains 192.0.2.10
 
   Scenario: A network without devices tells the user to enter the address
     Given no device is found on the network
-    When I open the pairing page of the bedside lamp
+    When I open the search page of the bedside lamp
     Then I see the text "No devices found. Enter the IP address yourself."
 
   Scenario: Searching again shows a device that appeared
     Given no device is found on the network
-    When I open the pairing page of the bedside lamp
+    When I open the search page of the bedside lamp
     And a device is found on the network at 192.0.2.10
     And I search again
     Then I see the found device at 192.0.2.10

@@ -49,6 +49,26 @@ def i_search_again(page):
     page.locator("#scan").click()
 
 
+@when(parsers.parse("I open the start page of the {device}"))
+def i_open_the_start_page(open_pairing_page, device):
+    open_pairing_page(DRIVER_IDS[device], view="start")
+
+
+@when(parsers.parse("I open the search page of the {device}"))
+def i_open_the_search_page(open_pairing_page, device):
+    open_pairing_page(DRIVER_IDS[device], view="discover")
+
+
+@when("I choose to search for devices")
+def i_choose_to_search(page):
+    page.locator("#search").click()
+
+
+@when("I choose to enter the details myself")
+def i_choose_to_enter_the_details(page):
+    page.locator("#manual").click()
+
+
 @when(parsers.parse("I open the pairing page of the {device}"))
 def i_open_the_pairing_page(open_pairing_page, device):
     open_pairing_page(DRIVER_IDS[device])
@@ -99,7 +119,7 @@ def the_page_title_is(page, title):
 
 @then(parsers.parse('I see the button "{text}"'))
 def i_see_the_button(page, text):
-    expect(page.locator("#add")).to_have_text(text)
+    expect(page.get_by_role("button", name=text)).to_be_visible()
 
 
 @then(parsers.parse('I see the message "{text}"'))
@@ -140,3 +160,8 @@ def i_see_the_text(page, text):
 @then(parsers.parse("the address field contains {address}"))
 def the_address_field_contains(page, address):
     expect(page.locator("#address")).to_have_value(address)
+
+
+@then("I see the search page")
+def i_see_the_search_page(page):
+    expect(page.locator("#found")).to_be_visible()

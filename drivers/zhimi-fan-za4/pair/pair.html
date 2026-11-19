@@ -186,12 +186,6 @@
 <main class="page">
   <p class="muted intro-text" data-i18n="pair.intro"></p>
 
-  <h2 class="section-heading" data-i18n="pair.found"></h2>
-  <div id="found" class="card"></div>
-  <div class="buttons">
-    <span id="scan" class="button" role="button" tabindex="0" data-i18n="pair.scan"></span>
-  </div>
-
   <h2 class="section-heading" data-i18n="pair.name"></h2>
   <input id="name" class="text-input" type="text" maxlength="64" autocomplete="off" />
 
@@ -245,55 +239,6 @@
     return text && text !== "pair.errors." + error.message ? text : error.message;
   }
 
-  const foundElement = document.getElementById("found");
-  const scanButton = document.getElementById("scan");
-
-  function showFoundMessage(text) {
-    const row = document.createElement("div");
-    row.className = "empty-row muted small";
-    row.textContent = text;
-    foundElement.replaceChildren(row);
-  }
-
-  function selectDevice(row, device) {
-    foundElement.querySelectorAll(".device-row").forEach((other) => {
-      other.classList.toggle("selected", other === row);
-    });
-    document.getElementById("address").value = device.address;
-  }
-
-  function buildDeviceRow(device) {
-    const row = document.createElement("div");
-    row.className = "device-row";
-    row.setAttribute("role", "button");
-    row.tabIndex = 0;
-    const address = document.createElement("span");
-    address.textContent = device.address;
-    const identifier = document.createElement("span");
-    identifier.className = "muted small";
-    identifier.textContent = Homey.__("pair.deviceId") + " " + device.deviceId;
-    row.append(address, identifier);
-    activateOnClickOrKey(row, () => selectDevice(row, device));
-    return row;
-  }
-
-  function showFoundDevices(devices) {
-    if (devices.length === 0) {
-      showFoundMessage(Homey.__("pair.noDevices"));
-      return;
-    }
-    foundElement.replaceChildren(...devices.map(buildDeviceRow));
-  }
-
-  async function scanForDevices() {
-    showFoundMessage(Homey.__("pair.scanning"));
-    try {
-      showFoundDevices(await Homey.emit("discover_devices", {}));
-    } catch (error) {
-      showFoundMessage(describeError(error));
-    }
-  }
-
   function readForm() {
     return {
       name: document.getElementById("name").value,
@@ -332,6 +277,9 @@
   });
 
   activateOnClickOrKey(document.getElementById("add"), addDevice);
-  activateOnClickOrKey(scanButton, scanForDevices);
-  scanForDevices();
+  Homey.getViewStoreValue("pair", "address").then((address) => {
+    if (address) {
+      document.getElementById("address").value = address;
+    }
+  });
 </script>

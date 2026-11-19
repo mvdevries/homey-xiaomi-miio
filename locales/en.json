@@ -1,7 +1,13 @@
 {
   "pair": {
     "title": "Add a Xiaomi device",
-    "intro": "Choose a device found on your network, or enter the details yourself. The token is found in the Mi Home app or with a token extractor.",
+    "intro": "Enter the details of your device. The IP address and token are found in the Mi Home app or in your router.",
+    "startIntro": "How do you want to add your device?",
+    "search": "Search for devices on my network",
+    "searchHelp": "The app looks for Xiaomi devices that answer on your network.",
+    "manual": "Enter the details myself",
+    "manualHelp": "You know the IP address and the token of the device.",
+    "discoverIntro": "Choose your device. Then enter its name and token.",
     "name": "Name",
     "address": "IP address",
     "token": "Device token",

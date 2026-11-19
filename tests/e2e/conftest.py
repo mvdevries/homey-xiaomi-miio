@@ -15,8 +15,11 @@ def backend(monkeypatch) -> Iterator[Backend]:
 
 @pytest.fixture
 def pairing_page(page, backend):
-    def open_page(driver_id: str, language: str = "en"):
-        page.goto(f"{backend.base_url}/pair.html?driver={driver_id}&lang={language}")
+    def open_page(driver_id: str, language: str = "en", view: str = "pair"):
+        page.goto(
+            f"{backend.base_url}/pair.html"
+            f"?driver={driver_id}&lang={language}&view={view}"
+        )
         return page
 
     return open_page

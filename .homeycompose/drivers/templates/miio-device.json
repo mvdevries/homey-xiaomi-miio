@@ -13,6 +13,12 @@
   "icon": "{{driverAssetsPath}}/icon.svg",
   "pair": [
     {
+      "id": "start"
+    },
+    {
+      "id": "discover"
+    },
+    {
       "id": "pair"
     }
   ],

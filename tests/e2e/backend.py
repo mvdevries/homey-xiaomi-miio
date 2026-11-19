@@ -55,6 +55,19 @@ HOMEY_STUB_TEMPLATE = """
     createDevice: function (device) {
       return post("__CREATE__", device);
     },
+    showView: function (view) {
+      const parameters = new URLSearchParams(location.search);
+      parameters.set("view", view);
+      location.search = parameters.toString();
+      return Promise.resolve();
+    },
+    setViewStoreValue: function (view, key, value) {
+      sessionStorage.setItem(view + "." + key, value);
+      return Promise.resolve();
+    },
+    getViewStoreValue: function (view, key) {
+      return Promise.resolve(sessionStorage.getItem(view + "." + key));
+    },
     done: function () {
       window.pairDone = true;
     },
@@ -88,8 +101,8 @@ def build_homey_stub() -> bytes:
     return script.encode()
 
 
-def build_pair_page(driver_id: str) -> bytes:
-    body = (DRIVERS_DIRECTORY / driver_id / "pair" / "pair.html").read_text()
+def build_pair_page(driver_id: str, view: str) -> bytes:
+    body = (DRIVERS_DIRECTORY / driver_id / "pair" / f"{view}.html").read_text()
     page = PAGE_TEMPLATE.replace("__STUB__", HOMEY_STUB_PATH).replace("__BODY__", body)
     return page.encode()
 
@@ -150,8 +163,10 @@ class Backend:
                 if url.path == HOMEY_STUB_PATH:
                     self._send(200, homey_stub, "application/javascript")
                 elif url.path == PAIR_PATH:
-                    driver_id = parse_qs(url.query)["driver"][0]
-                    self._send(200, build_pair_page(driver_id), "text/html")
+                    query = parse_qs(url.query)
+                    driver_id = query["driver"][0]
+                    view = query.get("view", ["pair"])[0]
+                    self._send(200, build_pair_page(driver_id, view), "text/html")
                 else:
                     self._send(404, b"not found", "text/plain")
 
