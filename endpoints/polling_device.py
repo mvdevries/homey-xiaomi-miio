@@ -3,10 +3,10 @@ from typing import Any
 
 from homey.device import Device
 
-from .errors import InvalidTokenError, MiioError
-from .polling import polling_seconds
+from ..application.connection_policy import should_mark_unavailable
+from ..domain.errors import InvalidTokenError, MiioError
+from ..domain.polling import polling_seconds
 
-FAILURES_BEFORE_UNAVAILABLE = 3
 UNREACHABLE_MESSAGE = "Device unreachable"
 INVALID_TOKEN_MESSAGE = "The device token is invalid"
 
@@ -101,11 +101,11 @@ class MiioPollingDevice(Device):
     async def _handle_failure(self, error: MiioError) -> None:
         self._failures += 1
         self.error(f"Polling failed ({self._failures}): {error}")
-        if self._failures >= self._failure_limit() and self.get_available():
+        if (
+            should_mark_unavailable(self._failures, self._connected)
+            and self.get_available()
+        ):
             await self.set_unavailable(UNREACHABLE_MESSAGE)
-
-    def _failure_limit(self) -> int:
-        return FAILURES_BEFORE_UNAVAILABLE if self._connected else 1
 
     def _require_client(self) -> Any:
         if self._client is None:

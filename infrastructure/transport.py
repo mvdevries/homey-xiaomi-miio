@@ -4,7 +4,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from .errors import (
+from ..domain.errors import (
     MalformedPacketError,
     MiioConnectionError,
     MiioDeviceError,
