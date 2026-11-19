@@ -1,6 +1,6 @@
 {
   "0.1.0": {
-    "en": "First skeleton: Python app with a Mi Bedside Lamp 2 driver and a pairing view.",
-    "nl": "Eerste skelet: Python-app met een Mi Bedlamp 2-driver en een koppelscherm."
+    "en": "First test release: control a Mi Bedside Lamp 2, a Mi Smart Standing Fan and a Mi Smart Humidifier over the local miIO protocol, without a cloud.",
+    "nl": "Eerste testversie: bedien een Mi Bedlamp 2, een Mi Smart staande ventilator en een Mi Smart luchtbevochtiger via het lokale miIO-protocol, zonder cloud."
   }
 }
