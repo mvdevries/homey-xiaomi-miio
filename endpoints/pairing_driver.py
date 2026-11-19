@@ -8,7 +8,6 @@ from ..container import (
 )
 from ..domain.errors import (
     CloudError,
-    LoginFailedError,
     MiioError,
     NotSignedInError,
 )
@@ -45,7 +44,7 @@ class MiioDriver(Driver):
             return await self._account_login_service().devices(self.models)
         except NotSignedInError as error:
             raise Exception("not_signed_in") from error
-        except LoginFailedError as error:
+        except CloudError as error:
             raise Exception("login_unavailable") from error
 
     async def discover_devices(self, data: dict | None = None) -> list[dict]:

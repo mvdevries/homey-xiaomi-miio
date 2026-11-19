@@ -1,6 +1,12 @@
 import asyncio
+import logging
 
-from ..domain.errors import CloudError, LoginExpiredError, NotSignedInError
+from ..domain.errors import (
+    CloudError,
+    CloudRequestError,
+    LoginExpiredError,
+    NotSignedInError,
+)
 from ..domain.xiaomi_account import (
     SERVERS,
     STATE_EXPIRED,
@@ -13,6 +19,8 @@ from ..domain.xiaomi_account import (
     unique_by_id,
 )
 from .ports import CloudAuthenticator, CloudAuthenticatorFactory, CloudSession
+
+LOGGER = logging.getLogger(__name__)
 
 
 class AccountLoginService:
@@ -70,11 +78,18 @@ class AccountLoginService:
 
     async def _collect(self, session: CloudSession) -> list[CloudDevice]:
         found: list[CloudDevice] = []
+        failures = 0
         for server in self._servers:
             try:
-                found.extend(await session.list_devices(server))
-            except CloudError:
+                listed = await session.list_devices(server)
+            except CloudError as error:
+                failures += 1
+                LOGGER.warning("Account %s: %s", server, error)
                 continue
+            LOGGER.warning("Account %s: %d devices", server, len(listed))
+            found.extend(listed)
+        if failures == len(self._servers):
+            raise CloudRequestError("cloud_unreachable")
         return found
 
 

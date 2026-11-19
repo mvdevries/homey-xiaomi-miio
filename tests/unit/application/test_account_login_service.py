@@ -188,9 +188,10 @@ class TestAccountLoginServiceDevices:
 
         assert len(await service.devices()) == 1
 
-    async def test_given_failing_servers_when_asked_then_the_list_is_empty(self):
+    async def test_given_failing_servers_when_asked_then_the_request_fails(self):
         service = await self.signed_in(
             {"de": CloudError("down"), "us": CloudError("down")}
         )
 
-        assert await service.devices() == []
+        with pytest.raises(CloudRequestError):
+            await service.devices()
