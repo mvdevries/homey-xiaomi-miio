@@ -1,0 +1,22 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Oscillation angle",
+    "nl": "Oscillatiehoek"
+  },
+  "desc": {
+    "en": "Set the oscillation angle of the fan",
+    "nl": "Stel de oscillatiehoek van de ventilator in"
+  },
+  "units": {
+    "en": "°",
+    "nl": "°"
+  },
+  "min": 30,
+  "max": 120,
+  "step": 10,
+  "decimals": 0,
+  "getable": true,
+  "setable": true,
+  "uiComponent": "slider"
+}

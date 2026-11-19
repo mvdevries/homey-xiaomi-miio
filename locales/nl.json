@@ -1,14 +1,22 @@
 {
   "pair": {
     "title": "Xiaomi-apparaat toevoegen",
+    "intro": "Vul de gegevens van je apparaat in. Het IP-adres en de token vind je in de Mi Home-app of in je router.",
     "name": "Naam",
     "address": "IP-adres",
-    "token": "Apparaattoken (32 hexadecimale tekens)",
-    "polling": "Pollinginterval (seconden)",
+    "token": "Apparaattoken",
+    "tokenHelp": "32 hexadecimale tekens.",
+    "settings": "Instellingen",
+    "polling": "Pollinginterval",
+    "seconds": "seconden",
+    "pollingHelp": "Hoe vaak de status van het apparaat wordt uitgelezen. Het minimum is 5 seconden.",
     "add": "Apparaat toevoegen",
+    "adding": "Toevoegen…",
+    "added": "Apparaat toegevoegd",
     "errors": {
       "name_and_address_required": "Vul een naam en een IP-adres in.",
-      "token_invalid": "De token moet uit 32 hexadecimale tekens bestaan."
+      "token_invalid": "De token moet uit 32 hexadecimale tekens bestaan.",
+      "device_unreachable": "Het apparaat is niet bereikbaar. Controleer het IP-adres en de token."
     }
   }
 }

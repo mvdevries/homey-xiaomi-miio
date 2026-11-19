@@ -1,0 +1,16 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Oscillation",
+    "nl": "Oscillatie"
+  },
+  "desc": {
+    "en": "Turn the oscillation of the fan on or off",
+    "nl": "Zet de oscillatie van de ventilator aan of uit"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "toggle",
+  "insights": false,
+  "icon": "/assets/capabilities/fan_oscillating.svg"
+}

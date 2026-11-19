@@ -1,0 +1,64 @@
+{
+  "name": {
+    "en": "Mi Smart Standing Fan",
+    "nl": "Mi Smart staande ventilator"
+  },
+  "class": "fan",
+  "capabilities": [
+    "onoff",
+    "dim",
+    "fan_oscillating",
+    "fan_angle",
+    "led_display",
+    "buzzer_enabled",
+    "locked"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "lan"
+  ],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png",
+    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
+  },
+  "icon": "{{driverAssetsPath}}/icon.svg",
+  "pair": [
+    {
+      "id": "pair"
+    }
+  ],
+  "settings": [
+    {
+      "id": "address",
+      "type": "text",
+      "label": {
+        "en": "IP address",
+        "nl": "IP-adres"
+      },
+      "value": ""
+    },
+    {
+      "id": "token",
+      "type": "text",
+      "label": {
+        "en": "Device token",
+        "nl": "Apparaattoken"
+      },
+      "value": ""
+    },
+    {
+      "id": "polling",
+      "type": "number",
+      "label": {
+        "en": "Polling interval (seconds)",
+        "nl": "Pollinginterval (seconden)"
+      },
+      "min": 5,
+      "max": 3600,
+      "value": 10
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Mode",
+    "nl": "Stand"
+  },
+  "desc": {
+    "en": "Set the operating mode of the humidifier",
+    "nl": "Stel de stand van de luchtbevochtiger in"
+  },
+  "values": [
+    {
+      "id": "auto",
+      "title": {
+        "en": "Auto",
+        "nl": "Automatisch"
+      }
+    },
+    {
+      "id": "silent",
+      "title": {
+        "en": "Silent",
+        "nl": "Stil"
+      }
+    },
+    {
+      "id": "medium",
+      "title": {
+        "en": "Medium",
+        "nl": "Gemiddeld"
+      }
+    },
+    {
+      "id": "high",
+      "title": {
+        "en": "High",
+        "nl": "Hoog"
+      }
+    },
+    {
+      "id": "strong",
+      "title": {
+        "en": "Strong",
+        "nl": "Sterk"
+      }
+    }
+  ],
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker"
+}
