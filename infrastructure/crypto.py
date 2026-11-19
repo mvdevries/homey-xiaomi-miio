@@ -3,8 +3,8 @@ import hashlib
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
-from .errors import InvalidTokenError
-from .token import TOKEN_SIZE
+from ..domain.errors import InvalidTokenError
+from ..domain.token import TOKEN_SIZE
 
 BLOCK_SIZE_BITS = 128
 

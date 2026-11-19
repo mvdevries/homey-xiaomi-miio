@@ -1,12 +1,12 @@
 from collections.abc import Iterable
 from typing import Any
 
-from .errors import MiioDeviceError
-from .transport import MiioTransport
+from ..domain.errors import MiioDeviceError
+from .ports import DeviceTransport
 
 
 async def read_properties(
-    transport: MiioTransport,
+    transport: DeviceTransport,
     names: Iterable[str],
     optional: frozenset[str] = frozenset(),
 ) -> dict[str, Any]:
@@ -20,7 +20,7 @@ async def read_properties(
 
 
 async def _read_batch(
-    transport: MiioTransport, names: list[str]
+    transport: DeviceTransport, names: list[str]
 ) -> dict[str, Any] | None:
     try:
         result = await transport.send("get_prop", names)
@@ -31,7 +31,7 @@ async def _read_batch(
     return dict(zip(names, result, strict=True))
 
 
-async def _read_property(transport: MiioTransport, name: str, optional: bool) -> Any:
+async def _read_property(transport: DeviceTransport, name: str, optional: bool) -> Any:
     try:
         result = await transport.send("get_prop", [name])
     except MiioDeviceError:

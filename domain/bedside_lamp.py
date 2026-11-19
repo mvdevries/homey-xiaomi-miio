@@ -2,8 +2,6 @@ from dataclasses import dataclass
 from typing import Any
 
 from .errors import MalformedPacketError
-from .token import token_from_hex
-from .transport import MiioTransport
 
 MIN_COLOR_TEMPERATURE = 1700
 MAX_COLOR_TEMPERATURE = 6500
@@ -91,34 +89,7 @@ def state_to_capabilities(state: LampState) -> dict[str, bool | float | str]:
     }
 
 
-def build_lamp(address: str, token_hex: str) -> BedsideLamp2:
-    return BedsideLamp2(MiioTransport(address, token_from_hex(token_hex)))
-
-
 def _light_mode(color_mode: Any) -> str:
     if color_mode == COLOR_MODE_TEMPERATURE:
         return LIGHT_MODE_TEMPERATURE
     return LIGHT_MODE_COLOR
-
-
-class BedsideLamp2:
-    def __init__(self, transport: MiioTransport) -> None:
-        self._transport = transport
-
-    async def get_state(self) -> LampState:
-        return parse_state(await self._transport.send("get_prop", STATE_PROPERTIES))
-
-    async def set_power(self, on: bool) -> None:
-        await self._transport.send("set_power", ["on" if on else "off", *TRANSITION])
-
-    async def set_brightness(self, brightness: int) -> None:
-        await self._transport.send("set_bright", [brightness, *TRANSITION])
-
-    async def set_hsv(self, hue: int, saturation: int) -> None:
-        await self._transport.send("set_hsv", [hue, saturation, *TRANSITION])
-
-    async def set_color_temperature(self, kelvin: int) -> None:
-        await self._transport.send("set_ct_abx", [kelvin, *TRANSITION])
-
-    def close(self) -> None:
-        self._transport.close()

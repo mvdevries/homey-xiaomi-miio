@@ -3,8 +3,8 @@ import struct
 from dataclasses import dataclass
 from typing import Any
 
+from ..domain.errors import MalformedPacketError
 from .crypto import MiioCipher, md5
-from .errors import MalformedPacketError
 
 MAGIC = 0x2131
 HEADER_SIZE = 32
