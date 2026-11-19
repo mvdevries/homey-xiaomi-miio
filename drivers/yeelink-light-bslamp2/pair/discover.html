@@ -134,20 +134,64 @@
   .device-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
-    min-height: 56px;
-    padding: 8px 16px;
-    cursor: pointer;
+    min-height: 52px;
+    margin: 0 0 6px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--card-background);
+    line-height: 1.25;
     text-transform: none;
+    letter-spacing: normal;
+    cursor: pointer;
   }
 
-  .device-row + .device-row {
-    border-top: 1px solid var(--line-color);
+  .device-row:hover {
+    background: rgba(128, 128, 128, 0.18);
+  }
+
+  .device-row:active {
+    opacity: 0.75;
   }
 
   .device-row.selected {
     background: rgba(47, 123, 242, 0.18);
+  }
+
+  .device-row.selected:hover {
+    background: rgba(47, 123, 242, 0.28);
+  }
+
+  .device-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .device-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+
+  .device-identifier {
+    font-size: 0.8rem;
+    opacity: 0.65;
+  }
+
+  .device-address {
+    flex: none;
+    font-size: 0.9rem;
+    opacity: 0.65;
+    text-align: right;
+  }
+
+  .empty-row {
+    padding: 28px 20px;
+    border-radius: 12px;
+    background: var(--card-background);
+    text-align: center;
   }
 
   .heading-row {
@@ -239,7 +283,7 @@
       </svg>
     </span>
   </div>
-  <div id="found" class="card"></div>
+  <div id="found"></div>
 
   <div class="buttons">
     <span id="continue" class="button primary disabled" role="button" tabindex="0" aria-disabled="true" data-i18n="pair.continue"></span>
@@ -311,14 +355,22 @@
     row.className = "device-row";
     row.setAttribute("role", "button");
     row.tabIndex = 0;
-    const title = document.createElement("span");
-    title.textContent = device.name || device.address;
-    const details = document.createElement("span");
-    details.className = "muted small";
-    details.textContent = device.name
-      ? device.address
-      : device.deviceId;
-    row.append(title, details);
+    const name = document.createElement("span");
+    name.className = "device-name";
+    name.textContent = device.name || device.deviceId;
+    const text = document.createElement("span");
+    text.className = "device-text";
+    text.append(name);
+    if (device.name) {
+      const identifier = document.createElement("span");
+      identifier.className = "device-identifier";
+      identifier.textContent = device.deviceId;
+      text.append(identifier);
+    }
+    const address = document.createElement("span");
+    address.className = "device-address";
+    address.textContent = device.address;
+    row.append(text, address);
     activateOnClickOrKey(row, () => selectDevice(row, device));
     return row;
   }
