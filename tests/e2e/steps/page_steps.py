@@ -197,3 +197,9 @@ def i_still_see_the_search_page(page):
 @then(parsers.parse('the name field contains "{name}"'))
 def the_name_field_contains(page, name):
     expect(page.locator("#name")).to_have_value(name)
+
+
+@then(parsers.parse('I see the identifier "{identifier}" in the row of {address}'))
+def i_see_the_identifier(page, identifier, address):
+    row = page.locator(".device-row", has_text=address)
+    expect(row.locator(".device-identifier")).to_have_text(identifier)

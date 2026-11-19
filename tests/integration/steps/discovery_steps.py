@@ -48,3 +48,4 @@ def the_found_device_has_an_address_and_identifier(scenario):
     assert device["deviceId"] == "00001234"
     assert device["name"] == "yeelink-light-bslamp2_mibt0410"
     assert device["model"] == "yeelink.light.bslamp2"
+    assert device["productName"] == "Mi Bedside Lamp 2"

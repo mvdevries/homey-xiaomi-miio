@@ -91,7 +91,7 @@ Feature: The pairing page
     When I open the search page of the standing fan
     And I choose the found device at 192.0.2.10
     And I continue
-    Then the name field contains "zhimi-fan-za4_mibt0FE4"
+    Then the name field contains "Mi Smart Standing Fan"
 
   Scenario: Choosing a found device does not continue by itself
     Given a device is found on the network at 192.0.2.10
@@ -108,7 +108,13 @@ Feature: The pairing page
   Scenario: A found device is shown with the name it has on the network
     Given a device named "zhimi-fan-za4_mibt0FE4" is found on the network at 192.0.2.10
     When I open the search page of the standing fan
-    Then I see the found device named "zhimi-fan-za4_mibt0FE4" at 192.0.2.10
+    Then I see the found device named "Mi Smart Standing Fan" at 192.0.2.10
+    And I see the identifier "00001234" in the row of 192.0.2.10
+
+  Scenario: A found device with an unknown model keeps its network name
+    Given a device named "acme-gadget-x1_mibt1" is found on the network at 192.0.2.11
+    When I open the search page of the standing fan
+    Then I see the found device named "acme-gadget-x1_mibt1" at 192.0.2.11
 
   Scenario: A network without devices tells the user to enter the address
     Given no device is found on the network

@@ -10,6 +10,7 @@ class TestDiscoveredDevice:
             "deviceId": "00001234",
             "name": "",
             "model": "",
+            "productName": "",
         }
 
     def test_given_a_miio_hostname_when_asked_for_the_model_then_it_is_derived(self):
@@ -21,6 +22,20 @@ class TestDiscoveredDevice:
         device = DiscoveredDevice("192.0.2.10", 1, "living-room-tv")
 
         assert device.model == ""
+
+    def test_given_a_supported_model_when_named_then_the_product_name_is_given(
+        self,
+    ):
+        device = DiscoveredDevice("192.0.2.10", 1, "zhimi-fan-za4_mibt0FE4")
+
+        assert device.product_name == "Mi Smart Standing Fan"
+
+    def test_given_an_unknown_model_when_named_then_the_product_name_is_empty(
+        self,
+    ):
+        device = DiscoveredDevice("192.0.2.10", 1, "acme-gadget-x1_mibt1")
+
+        assert device.product_name == ""
 
 
 class TestShortHostname:

@@ -352,8 +352,12 @@
       return;
     }
     await Homey.setViewStoreValue("pair", "address", selectedDevice.address);
-    await Homey.setViewStoreValue("pair", "name", selectedDevice.name);
+    await Homey.setViewStoreValue("pair", "name", displayName(selectedDevice));
     Homey.showView("pair");
+  }
+
+  function displayName(device) {
+    return device.productName || device.name;
   }
 
   function buildDeviceRow(device) {
@@ -363,11 +367,12 @@
     row.tabIndex = 0;
     const name = document.createElement("span");
     name.className = "device-name";
-    name.textContent = device.name || device.deviceId;
+    const title = displayName(device) || device.deviceId;
+    name.textContent = title;
     const text = document.createElement("span");
     text.className = "device-text";
     text.append(name);
-    if (device.name) {
+    if (title !== device.deviceId) {
       const identifier = document.createElement("span");
       identifier.className = "device-identifier";
       identifier.textContent = device.deviceId;
