@@ -3,7 +3,7 @@
     "title": "Add a Xiaomi device",
     "intro": "Enter the details of your device. The IP address and token are found in the Mi Home app or in your router.",
     "startIntro": "How do you want to add your device?",
-    "addressWarning": "Make sure the IP address of your device stays the same. Give the device a fixed IP address in your router, otherwise Homey loses the device when the address changes.",
+    "addressWarning": "Give your device a fixed IP address in your router, so Homey keeps finding it.",
     "search": "Search for devices on my network",
     "searchHelp": "The app looks for Xiaomi devices that answer on your network.",
     "manual": "Enter the details myself",

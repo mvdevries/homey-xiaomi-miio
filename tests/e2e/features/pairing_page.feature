@@ -66,7 +66,7 @@ Feature: The pairing page
 
   Scenario: The start page warns that the IP address must stay the same
     When I open the start page of the bedside lamp
-    Then I see the warning "Make sure the IP address of your device stays the same."
+    Then I see the warning "Give your device a fixed IP address in your router, so Homey keeps finding it."
 
   Scenario: Choosing to search opens the search page
     When I open the start page of the bedside lamp
