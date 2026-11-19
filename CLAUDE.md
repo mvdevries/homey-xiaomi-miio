@@ -22,6 +22,15 @@ commands. The rules for working in this repository are in `.claude/rules/`.
 - Format and lint with `uv run ruff format .` and `uv run ruff check .`.
 - No secrets, tokens, personal data or home network addresses anywhere in the repository.
 
+## Releases
+
+`.github/workflows/release.yml` runs on every merge to `main` that changes the app (not only docs, tests or
+workflows) and can be started by hand. It determines the version from the branch name of the merged pull request
+(`breaking/` major, `feature/` minor, anything else patch), runs the checks, uploads to Athom in the `production`
+environment (secret `HOMEY_PAT`) and creates a tag and GitHub release. The version in the manifest is replaced
+during the run and not committed. The pull request workflow checks the branch name and runs the same checks, and
+CodeQL and Dependabot run on a schedule. Rules for working here are in `.claude/rules/`.
+
 ## Commands
 
 | Task | Command |
