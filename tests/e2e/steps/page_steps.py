@@ -313,3 +313,8 @@ def i_see_a_spinner_for_the_account_devices(page):
 @then("I see a spinner while the network is searched")
 def i_see_a_spinner_for_the_search(page):
     expect(page.locator("#found .spinner")).to_be_visible()
+
+
+@then("I do not see a spinner next to the status")
+def i_do_not_see_a_spinner_next_to_the_status(page):
+    expect(page.locator("#status-spinner")).to_be_hidden()

@@ -180,3 +180,8 @@ Feature: The pairing page
     Given the network search takes a while
     When I open the search page of the bedside lamp
     Then I see a spinner while the network is searched
+
+  Scenario: The spinner disappears once the QR code is shown
+    When I open the account page of the bedside lamp
+    Then I see the QR code
+    And I do not see a spinner next to the status

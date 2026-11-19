@@ -498,6 +498,7 @@
       const login = await Homey.emit("start_account_login", {});
       qrImage.src = login.qrImage;
       qrImage.hidden = false;
+      statusSpinner.hidden = true;
       pollTimer = setTimeout(checkStatus, POLL_INTERVAL_MILLISECONDS);
     } catch (error) {
       showStatus(describeError(error));
