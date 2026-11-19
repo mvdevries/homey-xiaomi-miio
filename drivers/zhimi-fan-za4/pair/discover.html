@@ -1,0 +1,414 @@
+<style>
+  :root {
+    --accent: #2f7bf2;
+    --line-color: rgba(128, 128, 128, 0.25);
+    --card-background: rgba(128, 128, 128, 0.08);
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  .page {
+    padding: 4px 0 24px;
+  }
+
+  .muted {
+    opacity: 0.65;
+  }
+
+  .small {
+    font-size: 0.85rem;
+  }
+
+  .intro-text {
+    margin: 4px 0 12px;
+  }
+
+  .help-text {
+    margin: 8px 0 0;
+  }
+
+  .section-heading {
+    margin: 18px 16px 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  .card {
+    background: var(--card-background);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .text-input {
+    box-sizing: border-box !important;
+    width: 100%;
+    height: 44px !important;
+    padding: 0 16px !important;
+    border: 0;
+    border-radius: 10px;
+    background: var(--card-background);
+    color: inherit;
+    font: inherit;
+    line-height: 44px !important;
+    text-indent: 0 !important;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .text-input:focus {
+    outline: 2px solid var(--accent);
+  }
+
+  .setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 56px;
+    padding: 8px 16px;
+    text-transform: none;
+  }
+
+  .setting-label {
+    font-size: 1rem;
+  }
+
+  .number-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .number-input {
+    box-sizing: border-box !important;
+    width: 84px;
+    height: 38px !important;
+    padding: 0 12px !important;
+    border: 0;
+    border-radius: 9px;
+    background: rgba(128, 128, 128, 0.18);
+    color: inherit;
+    font: inherit;
+    line-height: 38px !important;
+    text-align: right;
+    text-indent: 0 !important;
+  }
+
+  .number-input:focus {
+    outline: 2px solid var(--accent);
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .button {
+    padding: 13px 16px;
+    border-radius: 12px;
+    background: var(--card-background);
+    color: var(--accent);
+    font-weight: 600;
+    text-align: center;
+    text-transform: none;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .button.primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .button:active {
+    opacity: 0.75;
+  }
+
+  .device-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    margin: 0 0 6px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--card-background);
+    line-height: 1.25;
+    text-transform: none;
+    letter-spacing: normal;
+    cursor: pointer;
+  }
+
+  .device-row:hover {
+    background: rgba(128, 128, 128, 0.18);
+  }
+
+  .device-row:active {
+    opacity: 0.75;
+  }
+
+  .device-row.selected {
+    background: rgba(47, 123, 242, 0.18);
+  }
+
+  .device-row.selected:hover {
+    background: rgba(47, 123, 242, 0.28);
+  }
+
+  .device-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .device-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+
+  .device-identifier {
+    font-size: 0.8rem;
+    opacity: 0.65;
+  }
+
+  .device-address {
+    flex: none;
+    font-size: 0.9rem;
+    opacity: 0.65;
+    text-align: right;
+  }
+
+  .empty-row {
+    padding: 28px 20px;
+    border-radius: 12px;
+    background: var(--card-background);
+    text-align: center;
+  }
+
+  .heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 14px 0 4px;
+  }
+
+  .heading-row .section-heading {
+    margin: 0 0 0 12px;
+  }
+
+  .icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin: 0 4px 0 0;
+    border-radius: 50%;
+    color: var(--accent);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .icon-button:hover {
+    background: rgba(128, 128, 128, 0.18);
+  }
+
+  .icon-button:active {
+    opacity: 0.75;
+  }
+
+  .icon-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .button.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .device-row:hover {
+    background: rgba(128, 128, 128, 0.18);
+  }
+
+  .device-row.selected:hover {
+    background: rgba(47, 123, 242, 0.28);
+  }
+
+  .device-row:active {
+    opacity: 0.75;
+  }
+
+  .empty-row {
+    padding: 16px;
+  }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    z-index: 10;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(30, 30, 30, 0.92);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  }
+
+  .toast.saved {
+    background: #34c759;
+  }
+
+  .toast.error {
+    background: #e5484d;
+  }
+</style>
+
+<main class="page">
+  <p class="muted intro-text" data-i18n="pair.discoverIntro"></p>
+
+  <div class="heading-row">
+    <h2 class="section-heading" data-i18n="pair.found"></h2>
+    <span id="scan" class="icon-button" role="button" tabindex="0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+        <polyline points="21 3 21 9 15 9" />
+      </svg>
+    </span>
+  </div>
+  <div id="found"></div>
+
+  <div class="buttons">
+    <span id="continue" class="button primary disabled" role="button" tabindex="0" aria-disabled="true" data-i18n="pair.continue"></span>
+    <span id="manual" class="button" role="button" tabindex="0" data-i18n="pair.manual"></span>
+  </div>
+</main>
+
+<script>
+  function describeError(error) {
+    const text = Homey.__("pair.errors." + error.message);
+    return text && text !== "pair.errors." + error.message ? text : error.message;
+  }
+
+  function activateOnClickOrKey(element, action) {
+    element.addEventListener("click", action);
+    element.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        action();
+      }
+    });
+  }
+
+  function translatePage() {
+    Homey.setTitle(Homey.__("pair.title"));
+    document.querySelectorAll("[data-i18n]").forEach((element) => {
+      element.textContent = Homey.__(element.dataset.i18n);
+    });
+  }
+
+  const foundElement = document.getElementById("found");
+  const scanButton = document.getElementById("scan");
+
+  function showFoundMessage(text) {
+    const row = document.createElement("div");
+    row.className = "empty-row muted small";
+    row.textContent = text;
+    foundElement.replaceChildren(row);
+  }
+
+  const continueButton = document.getElementById("continue");
+  let selectedDevice = null;
+
+  function selectDevice(row, device) {
+    foundElement.querySelectorAll(".device-row").forEach((other) => {
+      other.classList.toggle("selected", other === row);
+    });
+    selectedDevice = device;
+    continueButton.classList.remove("disabled");
+    continueButton.setAttribute("aria-disabled", "false");
+  }
+
+  function clearSelection() {
+    selectedDevice = null;
+    continueButton.classList.add("disabled");
+    continueButton.setAttribute("aria-disabled", "true");
+  }
+
+  async function continueWithSelectedDevice() {
+    if (selectedDevice === null) {
+      return;
+    }
+    await Homey.setViewStoreValue("pair", "address", selectedDevice.address);
+    await Homey.setViewStoreValue("pair", "name", displayName(selectedDevice));
+    Homey.showView("pair");
+  }
+
+  function displayName(device) {
+    return device.productName || device.name;
+  }
+
+  function buildDeviceRow(device) {
+    const row = document.createElement("div");
+    row.className = "device-row";
+    row.setAttribute("role", "button");
+    row.tabIndex = 0;
+    const name = document.createElement("span");
+    name.className = "device-name";
+    const title = displayName(device) || device.deviceId;
+    name.textContent = title;
+    const text = document.createElement("span");
+    text.className = "device-text";
+    text.append(name);
+    if (title !== device.deviceId) {
+      const identifier = document.createElement("span");
+      identifier.className = "device-identifier";
+      identifier.textContent = device.deviceId;
+      text.append(identifier);
+    }
+    const address = document.createElement("span");
+    address.className = "device-address";
+    address.textContent = device.address;
+    row.append(text, address);
+    activateOnClickOrKey(row, () => selectDevice(row, device));
+    return row;
+  }
+
+  function showFoundDevices(devices) {
+    if (devices.length === 0) {
+      showFoundMessage(Homey.__("pair.noDevices"));
+      return;
+    }
+    foundElement.replaceChildren(...devices.map(buildDeviceRow));
+  }
+
+  async function scanForDevices() {
+    clearSelection();
+    showFoundMessage(Homey.__("pair.scanning"));
+    try {
+      showFoundDevices(await Homey.emit("discover_devices", {}));
+    } catch (error) {
+      showFoundMessage(describeError(error));
+    }
+  }
+
+  translatePage();
+  document.getElementById("scan").setAttribute("aria-label", Homey.__("pair.scan"));
+  document.getElementById("scan").title = Homey.__("pair.scan");
+  activateOnClickOrKey(continueButton, continueWithSelectedDevice);
+  activateOnClickOrKey(document.getElementById("scan"), scanForDevices);
+  activateOnClickOrKey(document.getElementById("manual"), () => Homey.showView("pair"));
+  scanForDevices();
+</script>

@@ -1,6 +1,8 @@
 from collections.abc import Callable
 from typing import Any, Protocol
 
+from ..domain.discovery import DiscoveredDevice
+
 
 class DeviceTransport(Protocol):
     async def send(
@@ -15,3 +17,7 @@ class DeviceTransport(Protocol):
 
 
 type TransportFactory = Callable[[str, bytes], DeviceTransport]
+
+
+class DeviceScanner(Protocol):
+    async def scan(self) -> list[DiscoveredDevice]: ...
