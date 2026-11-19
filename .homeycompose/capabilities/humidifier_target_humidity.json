@@ -1,0 +1,58 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Target humidity",
+    "nl": "Doelluchtvochtigheid"
+  },
+  "desc": {
+    "en": "Set the humidity the humidifier works towards",
+    "nl": "Stel de luchtvochtigheid in waar de luchtbevochtiger naartoe werkt"
+  },
+  "values": [
+    {
+      "id": "30",
+      "title": {
+        "en": "30%",
+        "nl": "30%"
+      }
+    },
+    {
+      "id": "40",
+      "title": {
+        "en": "40%",
+        "nl": "40%"
+      }
+    },
+    {
+      "id": "50",
+      "title": {
+        "en": "50%",
+        "nl": "50%"
+      }
+    },
+    {
+      "id": "60",
+      "title": {
+        "en": "60%",
+        "nl": "60%"
+      }
+    },
+    {
+      "id": "70",
+      "title": {
+        "en": "70%",
+        "nl": "70%"
+      }
+    },
+    {
+      "id": "80",
+      "title": {
+        "en": "80%",
+        "nl": "80%"
+      }
+    }
+  ],
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker"
+}

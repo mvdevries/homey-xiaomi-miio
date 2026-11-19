@@ -1,0 +1,16 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Buzzer",
+    "nl": "Zoemer"
+  },
+  "desc": {
+    "en": "Turn the sound feedback on or off",
+    "nl": "Zet de geluidsmelding aan of uit"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "toggle",
+  "insights": false,
+  "icon": "/assets/capabilities/buzzer_enabled.svg"
+}
