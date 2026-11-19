@@ -25,3 +25,7 @@ class MiioDeviceError(MiioError):
     @property
     def recoverable(self) -> bool:
         return self.code in RECOVERABLE_ERROR_CODES
+
+
+class MiioConnectionError(MiioError):
+    pass
