@@ -203,3 +203,92 @@ def the_name_field_contains(page, name):
 def i_see_the_identifier(page, identifier, address):
     row = page.locator(".device-row", has_text=address)
     expect(row.locator(".device-identifier")).to_have_text(identifier)
+
+
+@given(
+    parsers.parse('my Xiaomi account has a bedside lamp named "{name}" at {address}')
+)
+def my_account_has_a_bedside_lamp(backend, name, address):
+    backend.cloud.add_device(
+        "de",
+        did="1001",
+        name=name,
+        model="yeelink.light.bslamp2",
+        token=DEVICE_TOKEN_HEX,
+        localip=address,
+    )
+
+
+@given(parsers.parse('my Xiaomi account also has a smart speaker named "{name}"'))
+def my_account_has_a_speaker(backend, name):
+    backend.cloud.add_device(
+        "de",
+        did="1002",
+        name=name,
+        model="xiaomi.wifispeaker.l09g",
+        token="ff" * 16,
+        localip="192.0.2.30",
+    )
+
+
+@given("my Xiaomi account does not hand out a service token")
+def my_account_hands_out_no_token(backend):
+    backend.cloud.refuse_service_token = True
+
+
+@when("I choose to log in with my Xiaomi account")
+def i_choose_to_log_in(page):
+    page.locator("#account").click()
+
+
+@when(parsers.parse("I open the account page of the {device}"))
+def i_open_the_account_page(open_pairing_page, device):
+    open_pairing_page(DRIVER_IDS[device], view="account")
+
+
+@when(parsers.parse("I open the Dutch account page of the {device}"))
+def i_open_the_dutch_account_page(open_pairing_page, device):
+    open_pairing_page(DRIVER_IDS[device], "nl", view="account")
+
+
+@when("I scan the QR code with the Mi Home app")
+def i_scan_the_qr_code(page, backend):
+    expect(page.locator("#qr-image")).to_be_visible()
+    backend.cloud.scanned = True
+
+
+@when(parsers.parse('I choose the account device "{name}"'))
+def i_choose_the_account_device(page, name):
+    page.locator(".device-row", has_text=name).click()
+
+
+@then("I see the QR code")
+def i_see_the_qr_code(page):
+    expect(page.locator("#qr-image")).to_be_visible()
+    assert page.locator("#qr-image").get_attribute("src").startswith("data:image/")
+
+
+@then(parsers.parse('I see the text "{text}" in the status'))
+def i_see_the_text_in_the_status(page, text):
+    expect(page.locator("#status")).to_have_text(text)
+
+
+@then(parsers.parse('I see the text "{text}" in the account list'))
+def i_see_the_text_in_the_account_list(page, text):
+    expect(page.locator("#found")).to_contain_text(text)
+
+
+@then(parsers.parse('I see the account device "{name}" at {address}'))
+def i_see_the_account_device(page, name, address):
+    row = page.locator(".device-row", has_text=name)
+    expect(row).to_contain_text(address)
+
+
+@then(parsers.parse('I do not see the account device "{name}"'))
+def i_do_not_see_the_account_device(page, name):
+    expect(page.locator(".device-row", has_text=name)).to_have_count(0)
+
+
+@then("the token field is filled in")
+def the_token_field_is_filled_in(page):
+    expect(page.locator("#token")).to_have_value(DEVICE_TOKEN_HEX)

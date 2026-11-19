@@ -8,6 +8,18 @@
     "searchHelp": "The app looks for Xiaomi devices that answer on your network.",
     "manual": "Enter the details myself",
     "manualHelp": "You know the IP address and the token of the device.",
+    "account": "Log in with my Xiaomi account",
+    "accountHelp": "Scan a QR code with the Mi Home app and get the token automatically.",
+    "accountTitle": "Scan the QR code",
+    "accountIntro": "Open the Mi Home app on your phone and scan this QR code to log in. Your login goes straight to Xiaomi and is not stored.",
+    "accountWaiting": "Waiting for the scan…",
+    "accountSignedIn": "Logged in. Looking for your devices…",
+    "accountNoDevices": "No supported devices found in your Xiaomi account.",
+    "accountExpired": "The QR code expired.",
+    "accountFailed": "Logging in failed.",
+    "accountNewCode": "Show a new QR code",
+    "accountDevices": "Your devices",
+    "accountChoose": "Choose your device. Its name, address and token are filled in.",
     "discoverIntro": "Choose your device. Then enter its name and token.",
     "name": "Name",
     "address": "IP address",
@@ -29,7 +41,9 @@
       "name_and_address_required": "Enter a name and an IP address.",
       "token_invalid": "The token must be 32 hexadecimal characters.",
       "device_unreachable": "Cannot reach the device. Check the IP address and token.",
-      "discovery_failed": "Searching the network failed. Enter the IP address yourself."
+      "discovery_failed": "Searching the network failed. Enter the IP address yourself.",
+      "login_unavailable": "Cannot reach the Xiaomi account. Try again later.",
+      "not_signed_in": "Log in with your Xiaomi account first."
     }
   }
 }

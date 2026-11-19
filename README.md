@@ -1,13 +1,18 @@
 # Xiaomi MiIO for Homey
 
 Xiaomi MiIO controls Xiaomi devices from Homey over the local miIO protocol. Add a bedside lamp, a standing fan or
-a humidifier with its IP address and token, and control it from the Homey app, from flows and from your dashboard.
+a humidifier, and control it from the Homey app, from flows and from your dashboard. The app finds the device on your
+network and can read its token from your Xiaomi account.
 
-Everything runs on your Homey and your local network. Nothing is sent to the cloud.
+Everything runs on your Homey and your local network. The only exception is the optional login with your Xiaomi
+account, which reads the token of your device from the Xiaomi cloud once. Nothing is stored.
 
 ## What you get
 
 - Control a lamp, a fan and a humidifier from Homey, including every capability in flows.
+- The app searches your network for devices, so you do not have to type an IP address.
+- Log in with your Xiaomi account by scanning a QR code with the Mi Home app, and the app fills in the name, the
+  address and the token of your device.
 - The app checks that the device answers before it is added, and tells you when the address or the token is wrong.
 - The state of the device is read every few seconds. A change made on the device itself shows up in Homey on the
   next read.
@@ -32,12 +37,18 @@ issue with the model, its miIO properties and its commands.
 
 ## Getting started
 
-1. Find the IP address and the token of your device. The token has 32 hexadecimal characters and can be read from
-   your Xiaomi account, for example with
-   [Xiaomi-cloud-tokens-extractor](https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor).
-2. Install Xiaomi MiIO on your Homey.
-3. In Homey choose **Add device**, pick this app and the type of your device.
-4. Enter a name, the IP address, the token and how often the device is read, and choose **Add device**.
+1. Install Xiaomi MiIO on your Homey.
+2. In Homey choose **Add device**, pick this app and the type of your device.
+3. Choose how to add the device:
+   - **Search for devices on my network**: pick your device in the list.
+   - **Log in with my Xiaomi account**: scan the QR code with the Mi Home app and pick your device. The name, the IP
+     address and the token are filled in. Your login goes straight to Xiaomi and is not stored.
+   - **Enter the details myself**: type the IP address and the token. The token has 32 hexadecimal characters and
+     can be read from your Xiaomi account, for example with
+     [Xiaomi-cloud-tokens-extractor](https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor).
+4. Check the name, the IP address, the token and how often the device is read, and choose **Add device**.
+
+Give the device a fixed IP address in your router, otherwise Homey loses the device when the address changes.
 
 ## Settings
 
@@ -97,4 +108,7 @@ The store images are made from the photo
 from Pexels, used under the [Pexels License](https://www.pexels.com/license/). The original is not included; the
 image is cropped and scaled. Xiaomi MiIO for Homey is built on [cryptography](https://pypi.org/project/cryptography),
 and the commands of the devices follow the documentation of
-[python-miio](https://github.com/rytilahti/python-miio).
+[python-miio](https://github.com/rytilahti/python-miio). The login with a QR code and the reading of the devices
+from the Xiaomi account follow
+[Xiaomi-cloud-tokens-extractor](https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor) by Piotr Machowski
+(MIT License).

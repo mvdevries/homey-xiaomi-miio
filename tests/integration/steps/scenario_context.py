@@ -1,13 +1,16 @@
+import asyncio
 from dataclasses import dataclass, field
 from typing import Any
 
 import pytest
+from app.infrastructure.xiaomi_cloud import XiaomiCloudClient
 
 from tests.support.fake_miio_devices import (
     DEVICE_ADDRESS,
     DEVICE_TOKEN_HEX,
     FakeMiioDevice,
 )
+from tests.support.fake_xiaomi_cloud import FakeXiaomiCloud
 from tests.support.homey_devices import make_homey_device
 from tests.support.loop_harness import LoopHarness, wait_until
 from tests.support.loopback import install_loopback_transport
@@ -29,6 +32,11 @@ class ScenarioContext:
     pairing_result: dict[str, Any] | None = None
     pairing_error: Exception | None = None
     found_devices: list[dict[str, Any]] = field(default_factory=list)
+    cloud: FakeXiaomiCloud = field(default_factory=FakeXiaomiCloud)
+    account_driver: Any = None
+    account_login: dict[str, Any] | None = None
+    account_devices: list[dict[str, Any]] | None = None
+    account_error: Exception | None = None
 
     def call(self, coroutine: Any) -> Any:
         return self.harness.call(coroutine)
@@ -50,11 +58,22 @@ class ScenarioContext:
         device = self.homey_device
         return bool(device.capabilities) or not device.available
 
+    async def stop_waiting_for_login(self) -> None:
+        service = getattr(self.account_driver, "_account_login", None)
+        if service is not None:
+            service.close()
+            await asyncio.sleep(0)
+
     def stop_everything(self) -> None:
+        self.call(self.stop_waiting_for_login())
         if self.homey_device is not None:
             self.call(self.homey_device.on_uninit())
         if self.fake is not None:
             self.fake.stop()
+
+
+async def no_sleep(seconds):
+    return None
 
 
 @pytest.fixture
@@ -63,6 +82,10 @@ def scenario(monkeypatch):
     harness.start()
     context = ScenarioContext(harness=harness)
     install_loopback_transport(monkeypatch, context.ports)
+    monkeypatch.setattr(
+        "app.container.create_authenticator",
+        lambda: XiaomiCloudClient(context.cloud, sleep=no_sleep),
+    )
     yield context
     context.stop_everything()
     harness.stop()

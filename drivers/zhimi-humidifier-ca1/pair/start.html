@@ -218,6 +218,12 @@
         <span class="muted small" data-i18n="pair.searchHelp"></span>
       </span>
     </div>
+    <div id="account" class="device-row" role="button" tabindex="0">
+      <span>
+        <span data-i18n="pair.account"></span><br />
+        <span class="muted small" data-i18n="pair.accountHelp"></span>
+      </span>
+    </div>
     <div id="manual" class="device-row" role="button" tabindex="0">
       <span>
         <span data-i18n="pair.manual"></span><br />
@@ -256,5 +262,6 @@
 
   translatePage();
   activateOnClickOrKey(document.getElementById("search"), () => Homey.showView("discover"));
+  activateOnClickOrKey(document.getElementById("account"), () => Homey.showView("account"));
   activateOnClickOrKey(document.getElementById("manual"), () => Homey.showView("pair"));
 </script>

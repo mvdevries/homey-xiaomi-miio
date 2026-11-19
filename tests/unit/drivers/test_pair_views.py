@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 DRIVERS_DIRECTORY = Path(__file__).resolve().parents[3] / "drivers"
-VIEW_NAMES = ("start", "discover", "pair")
+VIEW_NAMES = ("start", "discover", "account", "pair")
 PAIR_VIEWS = sorted(DRIVERS_DIRECTORY.glob("*/pair/*.html"))
 
 

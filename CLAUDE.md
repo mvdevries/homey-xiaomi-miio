@@ -22,9 +22,11 @@ app.py             Homey entry point (stays in the root)
 container.py       Wires the implementations into the use cases
 domain/            Models, rules, errors and constants, no I/O
 application/       The use cases (one class per file) and ports.py, the interfaces they need
-infrastructure/    Implements the ports: the miIO UDP transport, packet encoding and encryption
+infrastructure/    Implements the ports: the miIO UDP transport, packet encoding and encryption, the discovery
+                   broadcast, and the Xiaomi cloud client (HTTP, RC4 signing, QR login)
 endpoints/         The Homey-facing base classes (polling device and pairing driver)
-drivers/<id>/      One folder per device type: device.py, driver.py, driver.compose.json, pair/ and assets/
+drivers/<id>/      One folder per device type: device.py, driver.py (a MiioDriver subclass with its `models`),
+                   driver.compose.json, pair/ (start, discover, account and pair views) and assets/
 locales/           Translations: en.json and nl.json
 assets/            App icon, store images and the icons of the custom capabilities
 tests/             unit/ (domain, application, infrastructure, endpoints, drivers), integration/ and e2e/ (Gherkin
@@ -66,7 +68,7 @@ Shared building blocks, use these instead of writing new ones:
 
 - `MiioPollingDevice` for polling, availability, the settings and the `commands` table of a device
   (`endpoints/polling_device.py`)
-- `MiioDriver` for pairing (`endpoints/pairing_driver.py`)
+- `MiioDriver` for pairing: validating a device, discovery and the Xiaomi account login (`endpoints/pairing_driver.py`)
 - `MiioService` as the base of the services, and `read_properties` to read properties in one request with a
   fallback (`application/device_service.py`, `application/properties.py`)
 - `.homeycompose/drivers/templates/miio-device.json` for the settings, the pairing view and the other shared
@@ -108,6 +110,18 @@ A new device type is a `domain` module (state, parser and the capability mapping
   when a mode is set while it is off, so the service switches it on and sends the mode again.
 - The tokens and addresses of real devices never go into the repository. Test devices are the fake devices in
   `tests/support/fake_miio_devices.py`.
+
+## Pairing flow
+
+- The pairing views are `start` (search, Xiaomi account or manual), `discover` (devices found by the broadcast),
+  `account` (QR code login and the devices of the account) and `pair` (the form). Views hand values to the form
+  through the view store (`Homey.setViewStoreValue("pair", ...)`) and move with `Homey.showView`.
+- Discovery sends a miIO hello broadcast and reads the hostname of each answer with a reverse DNS lookup. The model
+  comes from the hostname and is translated to a product name in `domain/discovery.py`.
+- The Xiaomi account login uses the QR flow of Xiaomi-cloud-tokens-extractor: a long poll on the login URL, then
+  encrypted (RC4) calls to the regional `api.io.mi.com` servers. `AccountLoginService` holds the login in memory,
+  the pairing view polls its state. No password, session or token is stored.
+- A driver lists its `models`, so the account page only shows devices that driver can control.
 
 ## Pairing page
 

@@ -1,4 +1,4 @@
-Xiaomi MiIO controls Xiaomi devices from Homey over the local miIO protocol. Everything runs on your Homey and your local network. Nothing is sent to the cloud.
+Xiaomi MiIO controls Xiaomi devices from Homey over the local miIO protocol. Everything runs on your Homey and your local network. Only the optional login with your Xiaomi account reads the token of your device once from the Xiaomi cloud; nothing is stored.
 
 Supported devices
 - Mi Bedside Lamp 2: on/off, brightness, colour, colour temperature and mode
@@ -6,9 +6,9 @@ Supported devices
 - Mi Smart Humidifier (zhimi.humidifier.ca1 and cb1): on/off, mode, target humidity, dry mode, humidity and temperature, LED display, buzzer and child lock
 
 Getting started
-1. Find the IP address and the device token (32 hexadecimal characters) of your device. The token can be read from your Xiaomi account with a token extractor tool.
-2. In Homey choose Add device, pick this app and the type of your device.
-3. Enter a name, the IP address, the token and how often the device is read. The app checks that the device answers before it is added.
+1. In Homey choose Add device, pick this app and the type of your device.
+2. Search for your device on your network, or log in with your Xiaomi account by scanning a QR code with the Mi Home app. The name, the IP address and the token are filled in for you. You can also enter the IP address and the token (32 hexadecimal characters) yourself.
+3. Check the details and choose Add device. The app checks that the device answers before it is added.
 
 Good to know
 - Give your device a fixed IP address in your router, so the app keeps finding it.

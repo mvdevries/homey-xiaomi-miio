@@ -1,3 +1,8 @@
 from app.endpoints.pairing_driver import MiioDriver
 
-homey_export = MiioDriver
+
+class StandingFanDriver(MiioDriver):
+    models = ("zhimi.fan.za4",)
+
+
+homey_export = StandingFanDriver

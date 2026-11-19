@@ -1,3 +1,4 @@
+from .application.account_login_service import AccountLoginService
 from .application.bedside_lamp_service import BedsideLampService
 from .application.discovery_service import DiscoveryService
 from .application.humidifier_service import HumidifierService
@@ -5,7 +6,9 @@ from .application.pairing_service import PairingService
 from .application.standing_fan_service import StandingFanService
 from .domain.token import token_from_hex
 from .infrastructure.discovery import UdpDeviceScanner
+from .infrastructure.http import HttpClient
 from .infrastructure.transport import MiioTransport
+from .infrastructure.xiaomi_cloud import XiaomiCloudClient
 
 
 def create_transport(address: str, token: bytes) -> MiioTransport:
@@ -34,3 +37,11 @@ def create_scanner() -> UdpDeviceScanner:
 
 def create_discovery_service() -> DiscoveryService:
     return DiscoveryService(scanner=create_scanner())
+
+
+def create_authenticator() -> XiaomiCloudClient:
+    return XiaomiCloudClient(HttpClient())
+
+
+def create_account_login_service() -> AccountLoginService:
+    return AccountLoginService(authenticator_factory=create_authenticator)

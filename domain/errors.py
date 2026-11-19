@@ -29,3 +29,27 @@ class MiioDeviceError(MiioError):
 
 class MiioConnectionError(MiioError):
     pass
+
+
+class CloudError(Exception):
+    pass
+
+
+class CloudRequestError(CloudError):
+    pass
+
+
+class CloudTimeoutError(CloudError):
+    pass
+
+
+class LoginExpiredError(CloudError):
+    pass
+
+
+class LoginFailedError(CloudError):
+    pass
+
+
+class NotSignedInError(CloudError):
+    pass

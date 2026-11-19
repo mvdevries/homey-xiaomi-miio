@@ -62,6 +62,7 @@ Feature: The pairing page
   Scenario: The start page offers searching or entering the details
     When I open the start page of the bedside lamp
     Then I see the button "Search for devices on my network"
+    And I see the button "Log in with my Xiaomi account"
     And I see the button "Enter the details myself"
 
   Scenario: The start page warns that the IP address must stay the same
@@ -127,3 +128,44 @@ Feature: The pairing page
     And a device is found on the network at 192.0.2.10
     And I search again
     Then I see the found device at 192.0.2.10
+
+  Scenario: Choosing to log in opens the account page
+    When I open the start page of the bedside lamp
+    And I choose to log in with my Xiaomi account
+    Then I see the QR code
+    And I see the text "Waiting for the scan…" in the status
+
+  Scenario: Scanning the QR code lists the devices of the account
+    Given my Xiaomi account has a bedside lamp named "Bedside lamp" at 192.0.2.10
+    And my Xiaomi account also has a smart speaker named "Kitchen speaker"
+    When I open the account page of the bedside lamp
+    And I scan the QR code with the Mi Home app
+    Then I see the account device "Bedside lamp" at 192.0.2.10
+    And I do not see the account device "Kitchen speaker"
+
+  Scenario: A chosen account device fills in the name, address and token
+    Given my Xiaomi account has a bedside lamp named "Bedside lamp" at 192.0.2.10
+    When I open the account page of the bedside lamp
+    And I scan the QR code with the Mi Home app
+    And I choose the account device "Bedside lamp"
+    And I continue
+    Then the name field contains "Bedside lamp"
+    And the address field contains 192.0.2.10
+    And the token field is filled in
+
+  Scenario: An account without supported devices says so
+    Given my Xiaomi account also has a smart speaker named "Kitchen speaker"
+    When I open the account page of the bedside lamp
+    And I scan the QR code with the Mi Home app
+    Then I see the text "No supported devices found in your Xiaomi account." in the account list
+
+  Scenario: A login that fails can be tried again
+    Given my Xiaomi account does not hand out a service token
+    When I open the account page of the bedside lamp
+    And I scan the QR code with the Mi Home app
+    Then I see the text "Logging in failed." in the status
+    And I see the button "Show a new QR code"
+
+  Scenario: The account page is shown in Dutch
+    When I open the Dutch account page of the bedside lamp
+    Then I see the text "Wachten op de scan…" in the status

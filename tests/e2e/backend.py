@@ -1,3 +1,4 @@
+import asyncio
 import json
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -7,8 +8,11 @@ from urllib.parse import parse_qs, urlsplit
 
 from app.domain.discovery import DiscoveredDevice
 from app.endpoints.pairing_driver import MiioDriver
+from app.infrastructure.xiaomi_cloud import XiaomiCloudClient
 
+from tests.support import load_module
 from tests.support.fake_miio_devices import DEVICE_ADDRESS, FakeBedsideLamp
+from tests.support.fake_xiaomi_cloud import FakeXiaomiCloud
 from tests.support.loop_harness import LoopHarness
 from tests.support.loopback import install_loopback_transport
 
@@ -19,6 +23,11 @@ EMIT_PREFIX = "/__emit/"
 CREATE_DEVICE_PATH = "/__create_device"
 HOMEY_STUB_PATH = "/homey.js"
 PAIR_PATH = "/pair.html"
+ACCOUNT_EVENTS = {
+    "start_account_login": "start_account_login",
+    "account_login_status": "account_login_status",
+    "account_devices": "account_devices",
+}
 
 HOMEY_STUB_TEMPLATE = """
 (function () {
@@ -115,6 +124,10 @@ class FakeScanner:
         return self._devices
 
 
+async def no_sleep(seconds: float) -> None:
+    return None
+
+
 class Backend:
     def __init__(self, monkeypatch) -> None:
         self._monkeypatch = monkeypatch
@@ -123,12 +136,19 @@ class Backend:
         self.lamp = FakeBedsideLamp()
         self.created_devices: list[dict[str, Any]] = []
         self.discovered_devices: list[DiscoveredDevice] = []
+        self.cloud = FakeXiaomiCloud()
+        self._driver: MiioDriver | None = None
         self.base_url = ""
 
     def start(self) -> None:
         self._harness.start()
         self._harness.call(self.lamp.start())
         install_loopback_transport(self._monkeypatch, {DEVICE_ADDRESS: self.lamp.port})
+        self._monkeypatch.setattr(
+            "app.container.create_authenticator",
+            lambda: XiaomiCloudClient(self.cloud, sleep=no_sleep),
+        )
+        self._harness.call(self._create_driver())
         self._monkeypatch.setattr(
             "app.container.create_scanner",
             lambda: FakeScanner(self.discovered_devices),
@@ -137,7 +157,12 @@ class Backend:
         self.base_url = f"http://127.0.0.1:{self._server.server_address[1]}"
         threading.Thread(target=self._server.serve_forever, daemon=True).start()
 
+    async def _create_driver(self) -> None:
+        module = load_module("drivers.yeelink-light-bslamp2.driver")
+        self._driver = module.homey_export()
+
     def stop(self) -> None:
+        self._harness.call(self._stop_waiting())
         if self._server is not None:
             self._server.shutdown()
             self._server.server_close()
@@ -146,6 +171,15 @@ class Backend:
 
     def validate_device(self, data: dict[str, Any]) -> dict[str, Any]:
         return self._harness.call(MiioDriver().validate_device(data))
+
+    async def _stop_waiting(self) -> None:
+        service = self._driver._account_login
+        if service is not None:
+            service.close()
+            await asyncio.sleep(0)
+
+    def call_driver(self, handler: str, data: dict[str, Any]) -> Any:
+        return self._harness.call(getattr(self._driver, handler)(data))
 
     def discover_devices(self) -> list[dict[str, Any]]:
         return self._harness.call(MiioDriver().discover_devices())
@@ -178,11 +212,23 @@ class Backend:
                     self._validate(body)
                 elif path == EMIT_PREFIX + "discover_devices":
                     self._send_json(200, backend.discover_devices())
+                elif path.startswith(EMIT_PREFIX) and path[len(EMIT_PREFIX) :] in (
+                    ACCOUNT_EVENTS
+                ):
+                    self._emit_to_driver(ACCOUNT_EVENTS[path[len(EMIT_PREFIX) :]], body)
                 elif path == CREATE_DEVICE_PATH:
                     backend.created_devices.append(body)
                     self._send_json(200, {})
                 else:
                     self._send_json(404, {"error": "unknown_route"})
+
+            def _emit_to_driver(self, handler: str, body: dict[str, Any]) -> None:
+                try:
+                    result = backend.call_driver(handler, body)
+                except Exception as error:
+                    self._send_json(400, {"error": str(error)})
+                else:
+                    self._send_json(200, result)
 
             def _validate(self, body: dict[str, Any]) -> None:
                 try:

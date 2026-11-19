@@ -8,6 +8,18 @@
     "searchHelp": "De app zoekt naar Xiaomi-apparaten die op je netwerk antwoorden.",
     "manual": "Gegevens zelf invullen",
     "manualHelp": "Je kent het IP-adres en de token van het apparaat.",
+    "account": "Inloggen met mijn Xiaomi-account",
+    "accountHelp": "Scan een QR-code met de Mi Home-app en krijg de token automatisch.",
+    "accountTitle": "Scan de QR-code",
+    "accountIntro": "Open de Mi Home-app op je telefoon en scan deze QR-code om in te loggen. Je login gaat rechtstreeks naar Xiaomi en wordt niet opgeslagen.",
+    "accountWaiting": "Wachten op de scan…",
+    "accountSignedIn": "Ingelogd. Je apparaten worden opgezocht…",
+    "accountNoDevices": "Geen ondersteunde apparaten gevonden in je Xiaomi-account.",
+    "accountExpired": "De QR-code is verlopen.",
+    "accountFailed": "Inloggen is mislukt.",
+    "accountNewCode": "Toon een nieuwe QR-code",
+    "accountDevices": "Je apparaten",
+    "accountChoose": "Kies je apparaat. De naam, het adres en de token worden ingevuld.",
     "discoverIntro": "Kies je apparaat. Daarna vul je de naam en de token in.",
     "name": "Naam",
     "address": "IP-adres",
@@ -29,7 +41,9 @@
       "name_and_address_required": "Vul een naam en een IP-adres in.",
       "token_invalid": "De token moet uit 32 hexadecimale tekens bestaan.",
       "device_unreachable": "Het apparaat is niet bereikbaar. Controleer het IP-adres en de token.",
-      "discovery_failed": "Zoeken op het netwerk is mislukt. Vul het IP-adres zelf in."
+      "discovery_failed": "Zoeken op het netwerk is mislukt. Vul het IP-adres zelf in.",
+      "login_unavailable": "Het Xiaomi-account is niet bereikbaar. Probeer het later nog eens.",
+      "not_signed_in": "Log eerst in met je Xiaomi-account."
     }
   }
 }
