@@ -5,7 +5,7 @@ Feature: Discovering devices
     Given a bedside lamp that is on at 50% brightness
     When I search for devices on the network
     Then I find 1 device
-    And the found device has an address and an identifier
+    And the found device has an address, an identifier and the name it has on the network
 
   Scenario: An empty network finds nothing
     When I search for devices on an empty network

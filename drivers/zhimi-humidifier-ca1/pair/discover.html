@@ -147,8 +147,52 @@
   }
 
   .device-row.selected {
-    outline: 2px solid var(--accent);
-    outline-offset: -2px;
+    background: rgba(47, 123, 242, 0.18);
+  }
+
+  .heading-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin: 0 8px 2px 0;
+    border-radius: 50%;
+    color: var(--accent);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .icon-button:hover {
+    background: rgba(128, 128, 128, 0.18);
+  }
+
+  .icon-button:active {
+    opacity: 0.75;
+  }
+
+  .icon-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .button.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .device-row:hover {
+    background: rgba(128, 128, 128, 0.18);
+  }
+
+  .device-row.selected:hover {
+    background: rgba(47, 123, 242, 0.28);
   }
 
   .device-row:active {
@@ -186,11 +230,19 @@
 <main class="page">
   <p class="muted intro-text" data-i18n="pair.discoverIntro"></p>
 
-  <h2 class="section-heading" data-i18n="pair.found"></h2>
+  <div class="heading-row">
+    <h2 class="section-heading" data-i18n="pair.found"></h2>
+    <span id="scan" class="icon-button" role="button" tabindex="0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+        <polyline points="21 3 21 9 15 9" />
+      </svg>
+    </span>
+  </div>
   <div id="found" class="card"></div>
 
   <div class="buttons">
-    <span id="scan" class="button" role="button" tabindex="0" data-i18n="pair.scan"></span>
+    <span id="continue" class="button primary disabled" role="button" tabindex="0" aria-disabled="true" data-i18n="pair.continue"></span>
     <span id="manual" class="button" role="button" tabindex="0" data-i18n="pair.manual"></span>
   </div>
 </main>
@@ -228,9 +280,30 @@
     foundElement.replaceChildren(row);
   }
 
+  const continueButton = document.getElementById("continue");
+  let selectedDevice = null;
+
   function selectDevice(row, device) {
-    row.classList.add("selected");
-    Homey.setViewStoreValue("pair", "address", device.address).then(() => Homey.showView("pair"));
+    foundElement.querySelectorAll(".device-row").forEach((other) => {
+      other.classList.toggle("selected", other === row);
+    });
+    selectedDevice = device;
+    continueButton.classList.remove("disabled");
+    continueButton.setAttribute("aria-disabled", "false");
+  }
+
+  function clearSelection() {
+    selectedDevice = null;
+    continueButton.classList.add("disabled");
+    continueButton.setAttribute("aria-disabled", "true");
+  }
+
+  async function continueWithSelectedDevice() {
+    if (selectedDevice === null) {
+      return;
+    }
+    await Homey.setViewStoreValue("pair", "address", selectedDevice.address);
+    Homey.showView("pair");
   }
 
   function buildDeviceRow(device) {
@@ -238,12 +311,14 @@
     row.className = "device-row";
     row.setAttribute("role", "button");
     row.tabIndex = 0;
-    const address = document.createElement("span");
-    address.textContent = device.address;
-    const identifier = document.createElement("span");
-    identifier.className = "muted small";
-    identifier.textContent = Homey.__("pair.deviceId") + " " + device.deviceId;
-    row.append(address, identifier);
+    const title = document.createElement("span");
+    title.textContent = device.name || device.address;
+    const details = document.createElement("span");
+    details.className = "muted small";
+    details.textContent = device.name
+      ? device.address
+      : device.deviceId;
+    row.append(title, details);
     activateOnClickOrKey(row, () => selectDevice(row, device));
     return row;
   }
@@ -257,6 +332,7 @@
   }
 
   async function scanForDevices() {
+    clearSelection();
     showFoundMessage(Homey.__("pair.scanning"));
     try {
       showFoundDevices(await Homey.emit("discover_devices", {}));
@@ -266,6 +342,9 @@
   }
 
   translatePage();
+  document.getElementById("scan").setAttribute("aria-label", Homey.__("pair.scan"));
+  document.getElementById("scan").title = Homey.__("pair.scan");
+  activateOnClickOrKey(continueButton, continueWithSelectedDevice);
   activateOnClickOrKey(document.getElementById("scan"), scanForDevices);
   activateOnClickOrKey(document.getElementById("manual"), () => Homey.showView("pair"));
   scanForDevices();

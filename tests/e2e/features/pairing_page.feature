@@ -64,6 +64,10 @@ Feature: The pairing page
     Then I see the button "Search for devices on my network"
     And I see the button "Enter the details myself"
 
+  Scenario: The start page warns that the IP address must stay the same
+    When I open the start page of the bedside lamp
+    Then I see the warning "Make sure the IP address of your device stays the same."
+
   Scenario: Choosing to search opens the search page
     When I open the start page of the bedside lamp
     And I choose to search for devices
@@ -79,7 +83,25 @@ Feature: The pairing page
     When I open the search page of the bedside lamp
     Then I see the found device at 192.0.2.10
     When I choose the found device at 192.0.2.10
+    And I continue
     Then the address field contains 192.0.2.10
+
+  Scenario: Choosing a found device does not continue by itself
+    Given a device is found on the network at 192.0.2.10
+    When I open the search page of the bedside lamp
+    And I choose the found device at 192.0.2.10
+    Then I still see the search page
+
+  Scenario: Continuing needs a chosen device
+    Given a device is found on the network at 192.0.2.10
+    When I open the search page of the bedside lamp
+    And I continue
+    Then I still see the search page
+
+  Scenario: A found device is shown with the name it has on the network
+    Given a device named "zhimi-fan-za4_mibt0FE4" is found on the network at 192.0.2.10
+    When I open the search page of the standing fan
+    Then I see the found device named "zhimi-fan-za4_mibt0FE4" at 192.0.2.10
 
   Scenario: A network without devices tells the user to enter the address
     Given no device is found on the network

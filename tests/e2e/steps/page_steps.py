@@ -34,6 +34,11 @@ def a_device_is_found_on_the_network(backend, address):
     backend.discovered_devices.append(DiscoveredDevice(address, 0x1234))
 
 
+@given(parsers.parse('a device named "{name}" is found on the network at {address}'))
+def a_named_device_is_found_on_the_network(backend, name, address):
+    backend.discovered_devices.append(DiscoveredDevice(address, 0x1234, name))
+
+
 @given("no device is found on the network")
 def no_device_is_found_on_the_network(backend):
     backend.discovered_devices.clear()
@@ -42,6 +47,11 @@ def no_device_is_found_on_the_network(backend):
 @when(parsers.parse("I choose the found device at {address}"))
 def i_choose_the_found_device(page, address):
     page.locator(".device-row", has_text=address).click()
+
+
+@when("I continue")
+def i_continue(page):
+    page.locator("#continue").click(force=True)
 
 
 @when("I search again")
@@ -165,3 +175,20 @@ def the_address_field_contains(page, address):
 @then("I see the search page")
 def i_see_the_search_page(page):
     expect(page.locator("#found")).to_be_visible()
+
+
+@then(parsers.parse('I see the found device named "{name}" at {address}'))
+def i_see_the_named_found_device(page, name, address):
+    row = page.locator(".device-row", has_text=name)
+    expect(row).to_contain_text(address)
+
+
+@then(parsers.parse('I see the warning "{text}"'))
+def i_see_the_warning(page, text):
+    expect(page.get_by_role("note")).to_contain_text(text)
+
+
+@then("I still see the search page")
+def i_still_see_the_search_page(page):
+    expect(page.locator("#found")).to_be_visible()
+    expect(page.locator("#name")).to_have_count(0)

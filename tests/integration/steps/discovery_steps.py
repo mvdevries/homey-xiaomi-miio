@@ -7,11 +7,17 @@ from tests.support.loopback import LOOPBACK_ADDRESS, UNUSED_PORT
 SCAN_SECONDS = 0.3
 
 
+async def resolve_fake_name(address):
+    return "yeelink-light-bslamp2_mibt0410"
+
+
 def search(scenario, monkeypatch, port):
     monkeypatch.setattr(
         "app.container.create_scanner",
         lambda: UdpDeviceScanner(
-            targets=[(LOOPBACK_ADDRESS, port)], listen_seconds=SCAN_SECONDS
+            targets=[(LOOPBACK_ADDRESS, port)],
+            listen_seconds=SCAN_SECONDS,
+            name_resolver=resolve_fake_name,
         ),
     )
     scenario.found_devices = scenario.call(MiioDriver().discover_devices())
@@ -33,8 +39,12 @@ def i_find_devices(scenario, count):
     assert len(scenario.found_devices) == count
 
 
-@then("the found device has an address and an identifier")
+@then(
+    "the found device has an address, an identifier and the name it has on the network"
+)
 def the_found_device_has_an_address_and_identifier(scenario):
     device = scenario.found_devices[0]
     assert device["address"] == LOOPBACK_ADDRESS
     assert device["deviceId"] == "00001234"
+    assert device["name"] == "yeelink-light-bslamp2_mibt0410"
+    assert device["model"] == "yeelink.light.bslamp2"
