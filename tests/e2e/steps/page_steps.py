@@ -1,0 +1,105 @@
+import pytest
+from playwright.sync_api import expect
+from pytest_bdd import given, parsers, then, when
+
+from tests.support.fake_miio_devices import DEVICE_ADDRESS, DEVICE_TOKEN_HEX
+from tests.support.loop_harness import wait_until
+
+DRIVER_IDS = {
+    "bedside lamp": "yeelink-light-bslamp2",
+    "standing fan": "zhimi-fan-za4",
+    "humidifier": "zhimi-humidifier-ca1",
+}
+
+
+@pytest.fixture
+def open_pairing_page(pairing_page):
+    return pairing_page
+
+
+@given("a device answers at the address")
+def a_device_answers_at_the_address(backend):
+    backend.lamp.silent = False
+
+
+@given("no device answers at the address")
+def no_device_answers_at_the_address(backend):
+    backend.lamp.silent = True
+
+
+@when(parsers.parse("I open the pairing page of the {device}"))
+def i_open_the_pairing_page(open_pairing_page, device):
+    open_pairing_page(DRIVER_IDS[device])
+
+
+@when(parsers.parse("I open the Dutch pairing page of the {device}"))
+def i_open_the_dutch_pairing_page(open_pairing_page, device):
+    open_pairing_page(DRIVER_IDS[device], "nl")
+
+
+@when(parsers.parse('I enter the name "{name}"'))
+def i_enter_the_name(page, name):
+    page.locator("#name").fill(name)
+
+
+@when("I enter the address of the device")
+def i_enter_the_address(page):
+    page.locator("#address").fill(DEVICE_ADDRESS)
+
+
+@when(parsers.parse('I enter the token "{token}"'))
+def i_enter_a_token(page, token):
+    page.locator("#token").fill(token)
+
+
+@when("I enter the address and token of the device")
+def i_enter_the_address_and_token(page):
+    page.locator("#address").fill(DEVICE_ADDRESS)
+    page.locator("#token").fill(DEVICE_TOKEN_HEX)
+
+
+@when("I add the device")
+def i_add_the_device(page):
+    page.locator("#add").click()
+
+
+@then("I see the fields for the name, address, token and polling interval")
+def i_see_the_fields(page):
+    for field in ("#name", "#address", "#token", "#polling"):
+        expect(page.locator(field)).to_be_visible()
+
+
+@then(parsers.parse('the page title is "{title}"'))
+def the_page_title_is(page, title):
+    page.wait_for_function("window.pairTitle !== undefined")
+    assert page.evaluate("window.pairTitle") == title
+
+
+@then(parsers.parse('I see the button "{text}"'))
+def i_see_the_button(page, text):
+    expect(page.locator("#add")).to_have_text(text)
+
+
+@then(parsers.parse('I see the message "{text}"'))
+def i_see_the_message(page, text):
+    expect(page.locator("#toast")).to_have_text(text)
+
+
+@then(parsers.parse('the device "{name}" is created in Homey'))
+def the_device_is_created(backend, name):
+    wait_until(
+        lambda: any(device["name"] == name for device in backend.created_devices)
+    )
+    created = backend.created_devices[0]
+    assert created["settings"]["address"] == DEVICE_ADDRESS
+    assert created["settings"]["token"] == DEVICE_TOKEN_HEX
+
+
+@then("no device is created in Homey")
+def no_device_is_created(backend):
+    assert backend.created_devices == []
+
+
+@then("the pairing is finished")
+def the_pairing_is_finished(page):
+    page.wait_for_function("window.pairDone === true")
