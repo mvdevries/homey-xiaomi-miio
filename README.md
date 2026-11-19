@@ -1,45 +1,100 @@
 # Xiaomi MiIO for Homey
 
-A Homey app written in Python that controls Xiaomi devices over the local miIO protocol, without a cloud.
+Xiaomi MiIO controls Xiaomi devices from Homey over the local miIO protocol. Add a bedside lamp, a standing fan or
+a humidifier with its IP address and token, and control it from the Homey app, from flows and from your dashboard.
+
+Everything runs on your Homey and your local network. Nothing is sent to the cloud.
+
+## What you get
+
+- Control a lamp, a fan and a humidifier from Homey, including every capability in flows.
+- The app checks that the device answers before it is added, and tells you when the address or the token is wrong.
+- The state of the device is read every few seconds. A change made on the device itself shows up in Homey on the
+  next read.
+- A device that stops answering is shown as unavailable and comes back by itself.
+- The pairing page and the device settings are available in English and Dutch.
 
 ## Supported devices
 
-- Mi Bedside Lamp 2 (`yeelink.light.bslamp2`): on/off, brightness, hue, saturation, colour temperature, mode
-- Mi Smart Standing Fan (`zhimi.fan.za4`): on/off, speed, natural wind, oscillation and angle, LED display, buzzer,
-  child lock
-- Mi Smart Humidifier (`zhimi.humidifier.ca1`, `cb1`): on/off, mode, target humidity, dry mode, humidity and
-  temperature, LED display, buzzer, child lock. Only tested against a fake device so far
+| Device | What works in Homey |
+|---|---|
+| Mi Bedside Lamp 2 (`yeelink.light.bslamp2`) | On and off, brightness, colour, colour temperature and mode |
+| Mi Smart Standing Fan (`zhimi.fan.za4`) | On and off, speed (also natural wind), oscillation and angle (30 to 120 degrees), LED display, buzzer and child lock |
+| Mi Smart Humidifier (`zhimi.humidifier.ca1`, `cb1`) | On and off, mode, target humidity, dry mode, humidity and temperature, LED display, buzzer and child lock |
 
-## Adding a device
+The humidifier is only tested against a fake device so far. Other Xiaomi devices are not supported yet; open an
+issue with the model, its miIO properties and its commands.
 
-Pairing asks for a name, the IP address and the device token (32 hexadecimal characters). The app checks that the
-device answers before it is added. The token can be read from your Xiaomi account, for example with
-[Xiaomi-cloud-tokens-extractor](https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor).
+## Requirements
 
-## Development
+- A Homey Pro running Homey version 13 or later.
+- A supported Xiaomi device on the same network as your Homey, with the IP address and the token of the device.
 
-Requires Node.js, the Homey CLI (`npx homey`), a running Docker and [uv](https://docs.astral.sh/uv/). Log in
-once with `npx homey login` and pick a Homey with `npx homey select`.
+## Getting started
 
-```bash
-npx homey app validate --level publish
-npx homey app run --remote
-```
+1. Find the IP address and the token of your device. The token has 32 hexadecimal characters and can be read from
+   your Xiaomi account, for example with
+   [Xiaomi-cloud-tokens-extractor](https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor).
+2. Install Xiaomi MiIO on your Homey.
+3. In Homey choose **Add device**, pick this app and the type of your device.
+4. Enter a name, the IP address, the token and how often the device is read, and choose **Add device**.
 
-`run` does not reload changed code: stop and start it again after a change.
+## Settings
 
-```bash
-uv sync
-uv run playwright install chromium
-uv run ruff format .
-uv run ruff check .
-uv run pytest
-```
+- **IP address**: the address of the device. Give the device a fixed address in your router.
+- **Device token**: the token of the device. A new token reconnects the device.
+- **Polling interval**: how often the state of the device is read, in seconds. The minimum is 5 seconds.
 
-The unit tests mirror the layers (`domain`, `application`, `infrastructure`, `endpoints`). The integration tests run
-the real code against a fake miIO device and the end-to-end tests drive the pairing page in a browser; both are
-Gherkin scenarios. See `CLAUDE.md` for the project structure and the architecture.
+## Good to know
+
+- The token changes when the device is reset or added again in the Mi Home app. Read the new token and enter it in
+  the device settings.
+- A command sent through UDP can get lost. The app tries again, so a command can occasionally take a second longer.
+- The oscillation angle of the standing fan is limited to 120 degrees, because the fan refuses a larger angle.
+
+## Troubleshooting
+
+**The device cannot be added: "Cannot reach the device"**
+- Check the IP address and the token. A wrong token looks the same as a device that does not answer.
+- Check that the device is switched on and on the same network as your Homey.
+- Make sure the router does not isolate wifi devices from each other, and that UDP port 54321 is not blocked.
+
+**A device is shown as unavailable**
+- Check that the device still has the same IP address. A fixed address in your router prevents this.
+- Check that the token did not change, for example after the device was reset.
+
+**A device reacts slowly**
+- Check the wifi signal of the device. A weak signal loses packets and the app has to send them again.
+
+Still stuck? Open an [issue](../../issues) with the version of the app and what you see. Please leave out personal
+data such as device names, addresses and tokens.
+
+## Contributing
+
+Bug reports, ideas and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first. Security
+problems go through [SECURITY.md](SECURITY.md).
+
+## How this was made
+
+Xiaomi MiIO for Homey was built with the help of AI. Most of the code, the tests and the documentation were
+written by [Claude](https://www.anthropic.com/claude), an AI assistant from Anthropic, working under the direction
+of the maintainer. The maintainer decides what goes in, reviews the changes and is responsible for the result. The
+tests and the pipelines in this repository are there to check the work, whoever wrote it.
+
+## Trademarks
+
+Xiaomi and Mi are trademarks of Xiaomi Corporation. Xiaomi MiIO for Homey is an independent project and is not
+affiliated with or endorsed by Xiaomi.
 
 ## License
 
-MIT, see [LICENSE](LICENSE).
+Xiaomi MiIO for Homey is released under the [MIT License](LICENSE).
+
+## Credits
+
+The store images are made from the photo
+["Modern home living room with smart devices"](https://www.pexels.com/photo/modern-home-living-room-with-smart-devices-28549934/)
+from Pexels, used under the [Pexels License](https://www.pexels.com/license/). The original is not included; the
+image is cropped and scaled. Xiaomi MiIO for Homey is built on [cryptography](https://pypi.org/project/cryptography),
+and the commands of the devices follow the documentation of
+[python-miio](https://github.com/rytilahti/python-miio).
